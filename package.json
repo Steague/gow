@@ -6,15 +6,46 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.4.1",
+    "bootswatch": "^4.4.1",
+    "connect-ensure-login": "^0.1.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-accesstoken-validation": "^0.5.0",
+    "express-jwt": "^5.3.3",
+    "express-session": "^1.17.1",
+    "http-errors": "^1.7.3",
+    "jade": "^1.11.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.13",
+    "morgan": "^1.10.0",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-google-token": "^0.1.2",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
+    "react-burger-menu": "^2.6.13",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-google-login": "^5.1.19",
+    "react-loading-skeleton": "^2.0.1",
+    "react-router": "^5.1.2",
+    "react-router-bootstrap": "^0.25.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1",
+    "request": "^2.88.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "run-p start:*",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:dev-server": "nodemon ./bin/www",
+    "start:dev-app": "react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -30,5 +61,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "proxy": "http://localhost:4000",
+  "devDependencies": {
+    "node-sass": "^4.14.1",
+    "nodemon": "^2.0.3",
+    "npm-run-all": "^4.1.5",
+    "react-lorem-ipsum": "^1.4.4"
   }
 }
