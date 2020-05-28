@@ -36,7 +36,6 @@ class ThemeSwitcher extends React.Component {
     }
     loadTheme(theme) {
         this.setState({loaded: false});
-        console.log("load theme:", theme);
         this.removeCurrentTheme();
         this.appendStyleSheet(`/themes/${theme}/bootstrap.min.css`).then(url => {
             this.setState({loaded: true});
@@ -50,7 +49,6 @@ class ThemeSwitcher extends React.Component {
         const { theme } = this.props;
         const { theme: nextTheme } = nextProps;
         if (theme !== nextTheme) {
-            console.log("change theme to", nextTheme);
             this.loadTheme(nextTheme);
         }
         return true;

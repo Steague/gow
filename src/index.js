@@ -13,7 +13,7 @@ ReactDOM.render(
     //   <App />
     // </React.StrictMode>,
     <Provider store={store}>
-        <ThemeSwitcher themeStoreKey="theme">
+        <ThemeSwitcher>
             <App />
         </ThemeSwitcher>
     </Provider>,
