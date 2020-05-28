@@ -3,8 +3,9 @@
   position: fixed;
   width: 36px;
   height: 30px;
-  left: 36px;
-  top: 36px;
+  left: 1rem;
+  top: 22px;
+  z-index: 1031 !important;
 }
 
 /* Color/shape of burger icon bars */

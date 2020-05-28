@@ -1,0 +1,37 @@
+.preview-gallery {
+    border-top: 1px solid white;
+    text-align: left;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.drag-handle {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.remove-handle {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.react-datepicker-wrapper {
+    position: relative;
+    flex: 1 1;
+    .form-control.bs-date-picker {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        position: relative;
+        flex: 1 1;
+    }
+}
+
+.badges-cloud {
+    .badge {
+        margin-right: 2px;
+    }
+}

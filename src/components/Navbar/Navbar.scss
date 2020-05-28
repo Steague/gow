@@ -1,0 +1,11 @@
+#settings-actions-nav {
+    >div {
+        margin-bottom: 0;
+        >a {
+            padding:0 0 0 0.5rem;
+        }
+    }
+    #settings-actions-dropdown.dropdown-toggle::after {
+        display:none;
+    }
+}

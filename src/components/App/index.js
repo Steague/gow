@@ -7,9 +7,13 @@ import {
 import { LoremIpsum } from 'react-lorem-ipsum';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import Menu from "../Menu";
+import Admin from "../Admin";
 import PrivateRoute from "../PrivateRoute";
+import Navbar from "../Navbar";
 import config from "../../config.json";
-import "./App.scss";
+import { connect } from 'react-redux';
+
+import './App.scss';
 
 class App extends Component {
     constructor(props) {
@@ -94,33 +98,56 @@ class App extends Component {
         this.setState(loginState);
     }
     render() {
-        const { isAuthenticated, authPending } = this.state;
+        const { isAuthenticated, authPending, token } = this.state;
+        // const { theme } = this.props;
+        // switch (true) {
+        //     case (theme === 'dark'): {
+        //         require('../../themes/darkly.scss');
+        //         break;
+        //     }
+        //     case (theme === 'default'):
+        //     default: {
+        //         require('../../themes/default.scss');
+        //     }
+        // }
+        // require('./App.scss');
         return (
             <Router>
                 <div id="outer-container">
-                    <div className="left">
-                        <Menu
-                            googleLoginStateButton={this.getGoogleLoginStateButton()}
-                            isAuthenticated={isAuthenticated}
-                        />
-                    </div>
+                    <Menu
+                        googleLoginStateButton={this.getGoogleLoginStateButton()}
+                        isAuthenticated={isAuthenticated}
+                    />
 
-                    <main id="page-wrap">
+                    <Navbar
+                        isAuthenticated={isAuthenticated}
+                        authPending={authPending}
+                    />
+
+                    <div id="page-wrap">
                         <Switch>
                             <PrivateRoute path="/admin" isAuthenticated={isAuthenticated} authPending={authPending}>
-                                <h1>Admin</h1>
-                                <LoremIpsum p={3} />
+                                <Admin token={token} />
                             </PrivateRoute>
-                            <Route exact path="/">
+                            <Route path="/">
                                 <h1>Home</h1>
                                 <LoremIpsum p={10} />
                             </Route>
                         </Switch>
-                    </main>
+                    </div>
                 </div>
             </Router>
         );
     }
 }
 
-export default App;
+const mapStateToProps = state => ({
+    theme: state.theme.theme
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(App);
