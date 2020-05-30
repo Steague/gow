@@ -77,7 +77,8 @@ class GowGallery extends Component {
             tags,
             photos = [],
             viewerIsOpen,
-            currentImage
+            currentImage,
+            closeLightbox
         } = this.props;
 
         return (
@@ -112,7 +113,7 @@ class GowGallery extends Component {
                 </Row>
                 <ModalGateway>
                     {viewerIsOpen ? (
-                        <Modal onClose={this.closeLightbox}>
+                        <Modal onClose={closeLightbox}>
                             <Carousel
                                 currentIndex={currentImage}
                                 views={photos.map(x => ({

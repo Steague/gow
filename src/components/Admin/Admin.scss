@@ -9,14 +9,22 @@
     position: absolute;
     top: 2px;
     left: 2px;
-    background-color: rgba(0,0,0,0.5);
+    opacity: 0.5;
+    transition: 1.3s !important;
+    &:hover {
+        opacity: 1;
+    }
 }
 
 .remove-handle {
     position: absolute;
     top: 2px;
     right: 2px;
-    background-color: rgba(0,0,0,0.5);
+    opacity: 0.5;
+    transition: 0.3s !important;
+    &:hover {
+        opacity: 1;
+    }
 }
 
 .react-datepicker-wrapper {

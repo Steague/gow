@@ -94,7 +94,7 @@ class AdGallery extends Component {
         });
     }
 
-    onRemoveImage(event, pIndex) {
+    onRemoveImage(pIndex) {
         this.setState({photos: _.remove(this.state.photos, (p,i) => i !== pIndex)});
     }
 
@@ -376,6 +376,7 @@ class AdGallery extends Component {
                                         tags={tags}
                                         photos={photos}
                                         onOpenCarousel={this.openLightbox}
+                                        closeLightbox={this.closeLightbox}
                                         onRemoveImage={this.onRemoveImage}
                                         onSortEnd={this.onSortEnd}
                                         viewerIsOpen={viewerIsOpen}
