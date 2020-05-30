@@ -21,7 +21,6 @@ class ThemeSwitcher extends React.Component {
                 list.push(node)
             }
         }
-        console.log({list});
         list.forEach((node) => { this.head.removeChild(node) });
     }
     appendStyleSheet(url) {
@@ -62,7 +61,7 @@ class ThemeSwitcher extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    theme: state.theme.theme
+    theme: state.theme
 });
 
 const mapDispatchToProps = dispatch => ({});

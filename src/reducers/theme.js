@@ -18,22 +18,14 @@ const getItem = (key) => {
         return null;
     }
 }
-const defaultState = {
-    theme: getItem("theme") || "darkly"
-};
 
-const theme = (state = defaultState, action) => {
+export default (state = getItem("theme") || "darkly", action) => {
     switch (action.type) {
     case 'SET_THEME':
         const { theme } = action;
         setItem("theme", theme);
-        return {
-            ...state,
-            theme
-        };
+        return theme;
     default:
         return state;
     }
 }
-
-export default theme;

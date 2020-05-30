@@ -6,11 +6,11 @@ const { generateToken, sendToken, verifyToken } = require('../utils/token.utils'
 // const jwt = require('jsonwebtoken');
 const config = require("../config");
 const multer = require('multer');
-const path = require('path');
+// const path = require('path');
 const fs = require("fs");
-const fstream = require("fstream");
+// const fstream = require("fstream");
 const unzipper = require("unzipper");
-require('../passport')();
+// require('../passport')();
 
 // console.log("path", path.join(__dirname, "..", "..", "uploads"));
 // require('./../mongoose')();

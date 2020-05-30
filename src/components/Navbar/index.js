@@ -57,7 +57,7 @@ class GowNavbar extends Component {
 }
 
 const mapStateToProps = state => ({
-    theme: state.theme.theme
+    theme: state.theme
 });
 
 const mapDispatchToProps = dispatch => ({
