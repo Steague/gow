@@ -3,7 +3,7 @@ import _ from 'lodash';
 import Dropzone from 'react-dropzone';
 import arrayMove from "array-move";
 import CryptoJS from "crypto-js";
-import { Button, InputGroup, Form, FormControl, Container, Row, Col, Navbar, Nav } from "react-bootstrap";
+import { Button, InputGroup, FormControl, Container, Row, Col, Navbar, Nav } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { confirm } from '../../ConfirmDialog';
 import TagCloud from '../../TagCloud';
@@ -37,6 +37,7 @@ class AdGallery extends Component {
         this.closeLightbox = this.closeLightbox.bind(this);
         this.onRemoveImage = this.onRemoveImage.bind(this);
         this.onSortEnd = this.onSortEnd.bind(this);
+        this.onSortTagsEnd = this.onSortTagsEnd.bind(this);
         this.onSortUp = this.onSortUp.bind(this);
         this.onSortDown = this.onSortDown.bind(this);
         this.onClearGallery = this.onClearGallery.bind(this);
@@ -84,6 +85,12 @@ class AdGallery extends Component {
         this.setState({
             photos: _.orderBy(this.state.photos, ['file.name'], ['desc']),
             sortDirection: "Down"
+        });
+    }
+
+    onSortTagsEnd({ oldIndex, newIndex }) {
+        this.setState({
+            tags: arrayMove(this.state.tags, oldIndex, newIndex)
         });
     }
 
@@ -223,169 +230,170 @@ class AdGallery extends Component {
                 // upload(acceptedFiles[0]);
             }}>*/}
                 <Container>
-                    <Form onSubmit={this.onSubmitGallery}>
-                        <Row>
-                            <Col xs={4}>
-                                <Dropzone onDrop={this.onDrop}>
-                                    {({getRootProps, getInputProps}) => (
-                                        <div {...getRootProps()} style={{cursor: "pointer", border: "2px dashed white", borderRadius: "10px", padding: "20px"}}>
-                                            <FontAwesomeIcon size="10x" icon={faCloudUpload} />
-                                            <input {...getInputProps()} />
-                                            <p>Drag 'n' drop some files here, or click to select files</p>
-                                        </div>
-                                    )}
-                                </Dropzone>
-                            </Col>
-                            <Col xs={8}>
-                                <InputGroup className="mb-1">
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Text id="basic-addon1">Gallery</InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl
-                                        placeholder="Name"
-                                        aria-label="Name"
-                                        aria-describedby="basic-addon1"
-                                        required
-                                        value={galleryName}
-                                        onChange={e => {
-                                            this.setState({galleryName: e.target.value});
-                                        }}
-                                    />
-                                    <FormControl.Feedback type="invalid">
-                                        Please choose a gallery name.
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                                <InputGroup className="mb-1">
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Text id="basic-addon1.1">Description</InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl
-                                        placeholder="Description"
-                                        aria-label="Description"
-                                        aria-describedby="basic-addon1.1"
-                                        required
-                                        value={galleryDescription}
-                                        onChange={e => {
-                                            this.setState({galleryDescription: e.target.value});
-                                        }}
-                                    />
-                                    <FormControl.Feedback type="invalid">
-                                        Please choose a gallery description.
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                                <InputGroup className="mb-1">
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Text id="basic-addon2"><FontAwesomeIcon icon={faCalendar} />&nbsp;<FontAwesomeIcon icon={faPlus} />&nbsp;<FontAwesomeIcon icon={faClock} /></InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl
-                                        as={DatePicker}
-                                        selected={releaseDate}
-                                        onChange={this.onReleaseDateChange}
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={15}
-                                        timeCaption="time"
-                                        dateFormat="MMMM d, yyyy h:mm aa"
-                                        fixedHeight
-                                        className="form-control bs-date-picker"
-                                        aria-describedby="basic-addon2"
-                                        required
-                                        isValid={releaseDate instanceof Date}
-                                    />
-                                    <FormControl.Feedback type="invalid">
-                                        Please choose a gallery release date &amp; time.
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                                <InputGroup className="mb-1">
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Text id="basic-addon3"><FontAwesomeIcon icon={faTags} /></InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl
-                                        placeholder="Add tags"
-                                        aria-label="Add tags"
-                                        aria-describedby="basic-addon3"
-                                        value={tagInput}
-                                        onChange={e => {
-                                            this.setState({tagInput: e.target.value});
-                                        }}
-                                        onKeyDown={e => {
-                                            switch (true) {
-                                                case (e.key === "Tab"):
-                                                case (e.key === "Enter"):
-                                                case (e.key === ","): {
-                                                    e.preventDefault();
-                                                    if (tagInput.length < 3) { return; }
-                                                    this.setState({tagInput: "", tags: [ ...(tags.filter(t => t !== tagInput)), tagInput]});
-                                                    break;
-                                                }
-                                                default: {
-                                                    //
-                                                }
+                    <Row>
+                        <Col xs={4}>
+                            <Dropzone onDrop={this.onDrop}>
+                                {({getRootProps, getInputProps}) => (
+                                    <div {...getRootProps()} style={{cursor: "pointer", border: "2px dashed white", borderRadius: "10px", padding: "20px"}}>
+                                        <FontAwesomeIcon size="10x" icon={faCloudUpload} />
+                                        <input {...getInputProps()} />
+                                        <p>Drag 'n' drop some files here, or click to select files</p>
+                                    </div>
+                                )}
+                            </Dropzone>
+                        </Col>
+                        <Col xs={8}>
+                            <InputGroup className="mb-1">
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text id="basic-addon1">Gallery</InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl
+                                    placeholder="Name"
+                                    aria-label="Name"
+                                    aria-describedby="basic-addon1"
+                                    required
+                                    value={galleryName}
+                                    onChange={e => {
+                                        this.setState({galleryName: e.target.value});
+                                    }}
+                                />
+                                <FormControl.Feedback type="invalid">
+                                    Please choose a gallery name.
+                                </FormControl.Feedback>
+                            </InputGroup>
+                            <InputGroup className="mb-1">
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text id="basic-addon1.1">Description</InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl
+                                    placeholder="Description"
+                                    aria-label="Description"
+                                    aria-describedby="basic-addon1.1"
+                                    required
+                                    value={galleryDescription}
+                                    onChange={e => {
+                                        this.setState({galleryDescription: e.target.value});
+                                    }}
+                                />
+                                <FormControl.Feedback type="invalid">
+                                    Please choose a gallery description.
+                                </FormControl.Feedback>
+                            </InputGroup>
+                            <InputGroup className="mb-1">
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text id="basic-addon2"><FontAwesomeIcon icon={faCalendar} />&nbsp;<FontAwesomeIcon icon={faPlus} />&nbsp;<FontAwesomeIcon icon={faClock} /></InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl
+                                    as={DatePicker}
+                                    selected={releaseDate}
+                                    onChange={this.onReleaseDateChange}
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15}
+                                    timeCaption="time"
+                                    dateFormat="MMMM d, yyyy h:mm aa"
+                                    fixedHeight
+                                    className="form-control bs-date-picker"
+                                    aria-describedby="basic-addon2"
+                                    required
+                                    isValid={releaseDate instanceof Date}
+                                />
+                                <FormControl.Feedback type="invalid">
+                                    Please choose a gallery release date &amp; time.
+                                </FormControl.Feedback>
+                            </InputGroup>
+                            <InputGroup className="mb-1">
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text id="basic-addon3"><FontAwesomeIcon icon={faTags} /></InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl
+                                    placeholder="Add tags"
+                                    aria-label="Add tags"
+                                    aria-describedby="basic-addon3"
+                                    value={tagInput}
+                                    onChange={e => {
+                                        this.setState({tagInput: e.target.value});
+                                    }}
+                                    onKeyDown={e => {
+                                        switch (true) {
+                                            case (e.key === "Tab"):
+                                            case (e.key === "Enter"):
+                                            case (e.key === ","): {
+                                                e.preventDefault();
+                                                if (tagInput.length < 3) { return; }
+                                                this.setState({tagInput: "", tags: [ ...(tags.filter(t => t !== tagInput)), tagInput]});
+                                                break;
                                             }
-                                        }}
-                                        isValid ={tags.length > 0}
-                                        isInvalid ={tags.length < this.minTags}
-                                    />
-                                    <FormControl.Feedback type="invalid">
-                                        Please add {this.minTags - tags.length} more gallery tag{this.minTags - tags.length === 1 ? "" : "s"}.
-                                    </FormControl.Feedback>
-                                    <FormControl.Feedback type="valid">
-                                        <div className="align-left badges-cloud">
-                                            <TagCloud
-                                                tags={tags}
-                                                removeable
-                                                handleRemove={i => {
-                                                    this.setState({tags: tags.filter((t, index) => index !== i)});
-                                                }}
-                                            />
-                                        </div>
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12}>
-                                <Navbar className="navbar-light" style={{
-                                    padding: "5px 0 0 0",
-                                    border: "1px solid white",
-                                    margin: "10px 0",
-                                    borderRadius: "10px"
+                                            default: {
+                                                //
+                                            }
+                                        }
+                                    }}
+                                    isValid ={tags.length > 0}
+                                    isInvalid ={tags.length < this.minTags}
+                                />
+                                <FormControl.Feedback type="invalid">
+                                    Please add {this.minTags - tags.length} more gallery tag{this.minTags - tags.length === 1 ? "" : "s"}.
+                                </FormControl.Feedback>
+                                <FormControl.Feedback type="valid">
+                                    <div className="align-left badges-cloud">
+                                        <TagCloud
+                                            tags={tags}
+                                            removeable
+                                            handleRemove={i => {
+                                                this.setState({tags: tags.filter((t, index) => index !== i)});
+                                            }}
+                                            onSortEnd={this.onSortTagsEnd}
+                                            useDragHandle
+                                            sortable
+                                        />
+                                    </div>
+                                </FormControl.Feedback>
+                            </InputGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12}>
+                            <Navbar className="navbar-light" style={{
+                                padding: "5px 0 0 0",
+                                border: "1px solid white",
+                                margin: "10px 0",
+                                borderRadius: "10px"
+                            }}>
+                                <Nav className="mr-auto" style={{
+                                    padding: "0 0 0 5px"
                                 }}>
-                                    <Nav className="mr-auto" style={{
-                                        padding: "0 0 0 5px"
-                                    }}>
-                                        <Nav.Item style={{
-                                            padding: "0 5px 0 0"
-                                        }}><Button onClick={this.onClearGallery} variant="danger"><FontAwesomeIcon icon={faTrash} /> Clear Gallery</Button ></Nav.Item>
-                                        <Nav.Item><Button variant="info" onClick={sortDirection !== "Up" ? this.onSortUp : this.onSortDown}><FontAwesomeIcon icon={sortDirection === "Up" ? faSortCircleUp : sortDirection === "Down" ? faSortCircleDown : faSortCircle} /> Sorted: {sortDirection === "Up" ? "Ascending" : sortDirection === "Down" ? "Descending" : "Unsorted"}</Button></Nav.Item>
-                                    </Nav>
-                                    <Nav style={{
+                                    <Nav.Item style={{
                                         padding: "0 5px 0 0"
-                                    }}>
-                                        <Nav.Item><Button variant="success" type="submit"><FontAwesomeIcon icon={faCheckCircle} /> Submit New Gallery</Button></Nav.Item>
-                                    </Nav>
-                                </Navbar>
-                                <div className="preview-gallery">
-                                    <Gallery
-                                        sortable
-                                        useDragHandle
-                                        loading={loadingGallery}
-                                        galleryName={galleryName}
-                                        galleryDescription={galleryDescription}
-                                        releaseDate={releaseDate}
-                                        tags={tags}
-                                        photos={photos}
-                                        onOpenCarousel={this.openLightbox}
-                                        closeLightbox={this.closeLightbox}
-                                        onRemoveImage={this.onRemoveImage}
-                                        onSortEnd={this.onSortEnd}
-                                        viewerIsOpen={viewerIsOpen}
-                                        currentImage={currentImage}
-                                    />
-                                </div>
-                            </Col>
-                        </Row>
-                    </Form>
+                                    }}><Button onClick={this.onClearGallery} variant="danger"><FontAwesomeIcon icon={faTrash} /> Clear Gallery</Button ></Nav.Item>
+                                    <Nav.Item><Button variant="info" onClick={sortDirection !== "Up" ? this.onSortUp : this.onSortDown}><FontAwesomeIcon icon={sortDirection === "Up" ? faSortCircleUp : sortDirection === "Down" ? faSortCircleDown : faSortCircle} /> Sorted: {sortDirection === "Up" ? "Ascending" : sortDirection === "Down" ? "Descending" : "Unsorted"}</Button></Nav.Item>
+                                </Nav>
+                                <Nav style={{
+                                    padding: "0 5px 0 0"
+                                }}>
+                                    <Nav.Item><Button variant="success" onClick={this.onSubmitGallery}><FontAwesomeIcon icon={faCheckCircle} /> Submit New Gallery</Button></Nav.Item>
+                                </Nav>
+                            </Navbar>
+                            <div className="preview-gallery">
+                                <Gallery
+                                    sortable
+                                    useDragHandle
+                                    loading={loadingGallery}
+                                    galleryName={galleryName}
+                                    galleryDescription={galleryDescription}
+                                    releaseDate={releaseDate}
+                                    tags={tags}
+                                    photos={photos}
+                                    onOpenCarousel={this.openLightbox}
+                                    closeLightbox={this.closeLightbox}
+                                    onRemoveImage={this.onRemoveImage}
+                                    onSortEnd={this.onSortEnd}
+                                    viewerIsOpen={viewerIsOpen}
+                                    currentImage={currentImage}
+                                />
+                            </div>
+                        </Col>
+                    </Row>
                 </Container>
             </div>
         );
