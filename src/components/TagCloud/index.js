@@ -15,21 +15,17 @@ class TagCloud extends Component {
 
     getWrapper() {
         const { sortable } = this.props;
-        const htmlTag = props => {
-            return (
-                <Badge {...props} />
-            );
-        }
+        const htmlTag = props => <Badge {...props} />
         return sortable ? SortableElement(htmlTag) : htmlTag;
     }
 
     render() {
         const { tags, removeable = false, handleRemove = () => {} } = this.props;
-        const Wrapper = this.getWrapper();
+        const TagWrapper = this.getWrapper();
         return (
             <span>
                 {tags.map((w, i) => (
-                    <Wrapper pill key={`tag-${i}`} index={i} variant="primary">
+                    <TagWrapper pill key={`tag-${i}`} index={i} variant="primary">
                         <span>
                             {removeable
                                 ?
@@ -44,7 +40,7 @@ class TagCloud extends Component {
                                 : w
                             }
                         </span>
-                    </Wrapper>
+                    </TagWrapper>
                 ))}
             </span>
         );

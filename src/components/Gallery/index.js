@@ -3,11 +3,10 @@ import { Container, Row, Col } from 'react-bootstrap';
 import ReactLoading from 'react-loading';
 import Carousel, { Modal, ModalGateway } from "react-images";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEyeSlash, faCalendar, faTags } from '@fortawesome/pro-solid-svg-icons';
+import { faEyeSlash } from '@fortawesome/pro-solid-svg-icons';
 import Gallery from "react-photo-gallery";
 import SortableGallery from './SortableGallery';
 import Photo from './Photo';
-import TagCloud from '../TagCloud';
 
 class GowGallery extends Component {
 
@@ -85,27 +84,18 @@ class GowGallery extends Component {
             <Container>
                 <Row>
                     <Col xs={9}>
-                        <h4>{galleryName || "Preview Gallery"}</h4>
+                        {galleryName}
                     </Col>
                     <Col xs={3} className="align-right">
-                        {releaseDate instanceof Date
-                            ? <h4><FontAwesomeIcon icon={faCalendar} /> {releaseDate.toLocaleDateString("en-US")}</h4>
-                            : null
-                        }
+                        {releaseDate}
                     </Col>
                 </Row>
                 <Row>
                     <Col xs={9}>
-                        <strong>Description</strong>: {galleryDescription || "No description currently."}
+                        {galleryDescription}
                     </Col>
                     <Col xs={3} className="align-right">
-                        {tags.length
-                            ?
-                                <div className="badges-cloud">
-                                    <FontAwesomeIcon icon={faTags} size="sm" /> <TagCloud tags={tags} />
-                                </div>
-                            : null
-                        }
+                        {tags}
                     </Col>
                 </Row>
                 <Row>
