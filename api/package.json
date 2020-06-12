@@ -1,0 +1,37 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon -L ./bin/www",
+    "serve2": "npx sequelize db:migrate && npx sequelize db:seed:all && nodemon -L ./bin/www",
+    "serve": "npx sequelize db:migrate && nodemon -L ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "fstream": "^1.0.12",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "jsonwebtoken": "^8.5.1",
+    "md5-file": "^5.0.0",
+    "mongoose": "^5.9.18",
+    "morgan": "~1.9.1",
+    "multer": "^1.4.2",
+    "multer-gridfs-storage": "^4.1.0",
+    "pg": "^8.2.1",
+    "pg-hstore": "^2.3.3",
+    "request": "^2.88.2",
+    "sequelize": "^5.21.12",
+    "sequelize-cli": "^5.5.1",
+    "unzipper": "^0.10.11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
