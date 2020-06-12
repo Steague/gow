@@ -1,6 +1,10 @@
 FROM node:alpine
 
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+COPY . /app
+RUN yarn --pure-lockfile
 
 EXPOSE 3000
+CMD ["npm", "rebuild", "node-sass"]
 CMD ["yarn", "start"]
