@@ -1,13 +1,9 @@
-import React, { Component } from 'react';
-import {
-    Switch,
-    Route,
-    withRouter
-} from "react-router-dom";
-import AddGallery from './AddGallery';
+import React, { Component } from "react";
+import { Switch, Route, withRouter } from "react-router-dom";
+import AddGallery from "./AddGallery";
 
 import "react-datepicker/dist/react-datepicker.css";
-import './Admin.scss';
+import "./Admin.scss";
 
 class Admin extends Component {
     render() {

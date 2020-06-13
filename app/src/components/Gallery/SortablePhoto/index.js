@@ -1,10 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { SortableElement } from "react-sortable-hoc";
-import Photo from '../Photo';
+import Photo from "../Photo";
 
 class SortablePhoto extends Component {
     render() {
-        const { onOpenCarousel, onRemoveImage, onMakeFeaturedImage, ...props } = this.props;
+        const {
+            onOpenCarousel,
+            onRemoveImage,
+            onMakeFeaturedImage,
+            ...props
+        } = this.props;
         return (
             <Photo
                 {...props}
@@ -14,7 +19,6 @@ class SortablePhoto extends Component {
             />
         );
     }
-
 }
 
 export default SortableElement(SortablePhoto);

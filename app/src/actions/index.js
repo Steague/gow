@@ -1,4 +1,4 @@
 export const setTheme = theme => ({
-    type: 'SET_THEME',
+    type: "SET_THEME",
     theme
 });

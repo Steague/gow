@@ -1,21 +1,16 @@
-import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from "react-router-dom";
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import React, { Component } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { GoogleLogin, GoogleLogout } from "react-google-login";
 import Menu from "../Menu";
 import Admin from "../Admin";
-import Galleries from './Galleries';
-import Gallery from './Gallery';
+import Galleries from "./Galleries";
+import Gallery from "./Gallery";
 import PrivateRoute from "../PrivateRoute";
 import Navbar from "../Navbar";
 import config from "../../config/config.json";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-
-import './App.scss';
+import "./App.scss";
 
 class App extends Component {
     constructor(props) {
@@ -25,7 +20,7 @@ class App extends Component {
             isAuthenticated: false,
             authPending: true,
             user: null,
-            token: ''
+            token: ""
         };
 
         this.state = {
@@ -51,7 +46,7 @@ class App extends Component {
                     onSuccess={this.responseGoogleSuccess}
                     onFailure={this.responseGoogleFailure}
                     onRequest={this.responseGoogleRequest}
-                    cookiePolicy={'single_host_origin'}
+                    cookiePolicy={"single_host_origin"}
                     isSignedIn={true}
                     className="google-nav-link"
                 />
@@ -71,25 +66,30 @@ class App extends Component {
     responseGoogleSuccess(response) {
         // if (!response) return;
         const myHeaders = new Headers({
-            'Authorization':  `Bearer ${response.tokenId}`
+            Authorization: `Bearer ${response.tokenId}`
         });
         const options = {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'default',
+            method: "POST",
+            mode: "cors",
+            cache: "default",
             headers: myHeaders
         };
-        fetch('/api/v1/auth/google', options).then(r => {
-            const token = r.headers.get('x-auth-token');
+        fetch("/api/v1/auth/google", options).then(r => {
+            const token = r.headers.get("x-auth-token");
             r.json().then(user => {
                 if (token) {
-                    this.setState({isAuthenticated: true, authPending: false, user, token})
+                    this.setState({
+                        isAuthenticated: true,
+                        authPending: false,
+                        user,
+                        token
+                    });
                 }
             });
-        })
+        });
     }
     responseGoogleRequest(response) {
-        this.setState({authPending : true});
+        this.setState({ authPending: true });
     }
     responseGoogleLogoutSuccess(response) {
         const loginState = this.initLoginS6tate;
@@ -111,14 +111,15 @@ class App extends Component {
                         isAuthenticated={isAuthenticated}
                     />
 
-                    <Navbar
-                        isAuthenticated={isAuthenticated}
-                        authPending={authPending}
-                    />
+                    <Navbar isAuthenticated={isAuthenticated} authPending={authPending} />
 
                     <div id="page-wrap">
                         <Switch>
-                            <PrivateRoute path="/admin" isAuthenticated={isAuthenticated} authPending={authPending}>
+                            <PrivateRoute
+                                path="/admin"
+                                isAuthenticated={isAuthenticated}
+                                authPending={authPending}
+                            >
                                 <Admin token={token} />
                             </PrivateRoute>
                             <Route path="/gallery/:id" render={props => <Gallery />} />
@@ -137,7 +138,4 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

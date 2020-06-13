@@ -1,13 +1,9 @@
-import React, { Component } from 'react';
-import {
-  Route,
-  Redirect,
-  withRouter
-} from "react-router-dom";
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import React, { Component } from "react";
+import { Route, Redirect, withRouter } from "react-router-dom";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 class PrivateRoute extends Component {
-    render () {
+    render() {
         const { children, isAuthenticated, authPending, ...rest } = this.props;
         return (
             <Route
@@ -17,7 +13,9 @@ class PrivateRoute extends Component {
                         children
                     ) : authPending !== false ? (
                         <SkeletonTheme color="#202020" highlightColor="#444">
-                            <h1><Skeleton /></h1>
+                            <h1>
+                                <Skeleton />
+                            </h1>
                             <p>
                                 <Skeleton count={5} />
                             </p>

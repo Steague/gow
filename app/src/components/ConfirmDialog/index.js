@@ -30,8 +30,22 @@ class Confirmation extends React.Component {
                     </Modal.Header>
                     <Modal.Body>{confirmation}</Modal.Body>
                     <Modal.Footer>
-                        {cancelLabel && <Button variant={cancelVariant} onClick={() => proceed(false)}>{cancelLabel}</Button>}
-                        {proceedLabel && <Button variant={proceedVariant} onClick={() => proceed(true)}>{proceedLabel}</Button>}
+                        {cancelLabel && (
+                            <Button
+                                variant={cancelVariant}
+                                onClick={() => proceed(false)}
+                            >
+                                {cancelLabel}
+                            </Button>
+                        )}
+                        {proceedLabel && (
+                            <Button
+                                variant={proceedVariant}
+                                onClick={() => proceed(true)}
+                            >
+                                {proceedLabel}
+                            </Button>
+                        )}
                     </Modal.Footer>
                 </Modal>
             </div>
