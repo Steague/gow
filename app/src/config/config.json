@@ -6,11 +6,16 @@
         "host": "db",
         "port": 5432,
         "dialect": "postgres",
-        "web":{
-            "client_id":"485397941781-7cg2qotdhi92aspff5h8sctrhireip6h.apps.googleusercontent.com","project_id":"gowadmin-1589112771893","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"jTn4FaoJN-Tc6he2gB6Vy9q1","redirect_uris":["http://localhost:3000/admin"],"javascript_origins":["http://localhost:3000","http://localhost:4000"]
+        "web": {
+            "client_id": "485397941781-7cg2qotdhi92aspff5h8sctrhireip6h.apps.googleusercontent.com",
+            "project_id": "gowadmin-1589112771893",
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_secret": "jTn4FaoJN-Tc6he2gB6Vy9q1",
+            "redirect_uris": ["http://localhost:3000/admin"],
+            "javascript_origins": ["http://localhost:3000", "http://localhost:4000"]
         },
-        "admins": [
-            "voodoomon@gmail.com"
-        ]
+        "admins": ["voodoomon@gmail.com"]
     }
 }

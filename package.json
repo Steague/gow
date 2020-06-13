@@ -1,27 +1,48 @@
 {
-  "name": "docker-services",
-  "version": "1.0.0",
-  "main": "index.js",
-  "author": "Thomas",
-  "license": "MIT",
-  "scripts": {
-    "dev:install": "./script/00-install.dev.sh",
-    "dev:up": "docker-compose -f docker/docker-compose.dev.yml up",
-    "dev:up:api": "docker-compose -f docker/docker-compose.dev.yml up -d api",
-    "dev:up:app": "docker-compose -f docker/docker-compose.dev.yml up -d app",
-    "dev:up:db": "docker-compose -f docker/docker-compose.dev.yml up -d db",
-    "dev:up:gfs": "docker-compose -f docker/docker-compose.dev.yml up -d gfs",
-    "dev:up:server": "docker-compose -f docker/docker-compose.dev.yml up -d server",
-    "dev:down": "docker-compose -f docker/docker-compose.dev.yml down",
-    "dev:uninstall": "docker-compose -f docker/docker-compose.dev.yml down --rmi all",
-    "dev:connect:api": "docker exec -it docker_api_1 /bin/sh",
-    "dev:connect:app": "docker exec -it docker_app_1 /bin/sh",
-    "dev:connect:db": "psql -h localhost -p 5431 -U gowuser -d gowdb",
-    "dev:connect:gfs": "docker exec -it docker_gfs_1 /bin/sh"
-  },
-  "dependencies": {
-    "create-react-app": "^3.4.1",
-    "crypto-js": "^4.0.0",
-    "express-generator": "^4.16.1"
-  }
+    "name": "docker-services",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "Thomas",
+    "license": "MIT",
+    "scripts": {
+        "dev:install": "./script/00-install.dev.sh",
+        "dev:up": "docker-compose -f docker/docker-compose.dev.yml up",
+        "dev:up:api": "docker-compose -f docker/docker-compose.dev.yml up -d api",
+        "dev:up:app": "docker-compose -f docker/docker-compose.dev.yml up -d app",
+        "dev:up:db": "docker-compose -f docker/docker-compose.dev.yml up -d db",
+        "dev:up:gfs": "docker-compose -f docker/docker-compose.dev.yml up -d gfs",
+        "dev:up:server": "docker-compose -f docker/docker-compose.dev.yml up -d server",
+        "dev:down": "docker-compose -f docker/docker-compose.dev.yml down",
+        "dev:uninstall": "docker-compose -f docker/docker-compose.dev.yml down --rmi all",
+        "dev:connect:api": "docker exec -it docker_api_1 /bin/sh",
+        "dev:connect:app": "docker exec -it docker_app_1 /bin/sh",
+        "dev:connect:db": "psql -h localhost -p 5431 -U gowuser -d gowdb",
+        "dev:connect:gfs": "docker exec -it docker_gfs_1 /bin/sh",
+        "lint": "eslint .",
+        "format": "prettier --write \"**/*.+(js|jsx|json|yml|yaml|css|scss|md|vue)\""
+    },
+    "dependencies": {
+        "create-react-app": "^3.4.1",
+        "crypto-js": "^4.0.0",
+        "express-generator": "^4.16.1"
+    },
+    "devDependencies": {
+        "eslint": "^7.2.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-import": "^2.21.2",
+        "eslint-plugin-prettier": "^3.1.3",
+        "prettier": "^2.0.5"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "plugin:prettier/recommended"
+        ]
+    },
+    "prettier": {
+        "printWidth": 90,
+        "trailingComma": "none",
+        "arrowParens": "avoid",
+        "tabWidth": 4
+    }
 }

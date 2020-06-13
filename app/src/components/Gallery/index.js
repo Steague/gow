@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
-import ReactLoading from 'react-loading';
+import React, { Component } from "react";
+import { Container, Row, Col, Card } from "react-bootstrap";
+import ReactLoading from "react-loading";
 import Carousel, { Modal, ModalGateway } from "react-images";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEyeSlash } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEyeSlash } from "@fortawesome/pro-solid-svg-icons";
 import Gallery from "react-photo-gallery";
-import SortableGallery from './SortableGallery';
-import Photo from './Photo';
+import SortableGallery from "./SortableGallery";
+import Photo from "./Photo";
 
 class GowGallery extends Component {
-
     getGalleryState() {
         const {
             loading = true,
@@ -24,14 +23,25 @@ class GowGallery extends Component {
         } = this.props;
 
         switch (true) {
-            case (loading === true): {
+            case loading === true: {
                 return (
-                    <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                        <ReactLoading type={"cylon"} color={"#FFFFFF"} height={'20%'} width={'20%'} />
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}
+                    >
+                        <ReactLoading
+                            type={"cylon"}
+                            color={"#FFFFFF"}
+                            height={"20%"}
+                            width={"20%"}
+                        />
                     </div>
                 );
             }
-            case (photos.length > 0 && sortable): {
+            case photos.length > 0 && sortable: {
                 return (
                     <SortableGallery
                         photos={photos}
@@ -44,7 +54,7 @@ class GowGallery extends Component {
                     />
                 );
             }
-            case (photos.length > 0 && !sortable): {
+            case photos.length > 0 && !sortable: {
                 return (
                     <Gallery
                         photos={photos}
@@ -63,8 +73,16 @@ class GowGallery extends Component {
             }
             default: {
                 return (
-                    <div style={{fontSize: "40px", textAlign: "center", margin: "50px 0"}}>
-                        <span><FontAwesomeIcon icon={faEyeSlash} /> Empty Gallery</span>
+                    <div
+                        style={{
+                            fontSize: "40px",
+                            textAlign: "center",
+                            margin: "50px 0"
+                        }}
+                    >
+                        <span>
+                            <FontAwesomeIcon icon={faEyeSlash} /> Empty Gallery
+                        </span>
                     </div>
                 );
             }
@@ -89,9 +107,7 @@ class GowGallery extends Component {
                 <Card className="text-left border-primary mb-3">
                     <Card.Header as="h4">
                         <Row>
-                            <Col xs={9}>
-                                {galleryName}
-                            </Col>
+                            <Col xs={9}>{galleryName}</Col>
                             <Col xs={3} className="text-right">
                                 {releaseDate}
                             </Col>
@@ -99,9 +115,7 @@ class GowGallery extends Component {
                     </Card.Header>
                     <Card.Body>
                         <Row>
-                            <Col xs={9}>
-                                {galleryDescription}
-                            </Col>
+                            <Col xs={9}>{galleryDescription}</Col>
                             <Col xs={3} className="badges-cloud text-right">
                                 {tags}
                             </Col>
@@ -126,7 +140,6 @@ class GowGallery extends Component {
             </Container>
         );
     }
-
 }
 
 export default GowGallery;

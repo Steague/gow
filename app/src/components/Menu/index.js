@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { slide as Menu } from 'react-burger-menu';
+import React, { Component } from "react";
+import { slide as Menu } from "react-burger-menu";
 // import { NavLink } from 'react-router-dom';
-import './Menu.scss';
+import "./Menu.scss";
 
 class BurgerMenu extends Component {
-    render () {
+    render() {
         const { googleLoginStateButton } = this.props;
         return (
             <Menu className="nav nav-pills flex-column bg-dark">
@@ -16,9 +16,7 @@ class BurgerMenu extends Component {
                         <NavLink exact className="nav-link" to="/admin">Admin</NavLink>
                     </li>
                 }*/}
-                <li className="nav-item">
-                    {googleLoginStateButton}
-                </li>
+                <li className="nav-item">{googleLoginStateButton}</li>
             </Menu>
         );
     }
