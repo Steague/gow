@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import TagCloud from '../../TagCloud';
-import Gal from '../../Gallery';
+import TagCloud from "../../TagCloud";
+import Gal from "../../Gallery";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTags, faCalendar } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTags, faCalendar } from "@fortawesome/pro-solid-svg-icons";
 
-import './Gallery.scss';
+import "./Gallery.scss";
 
 class Gallery extends Component {
     constructor(props) {
@@ -29,9 +29,12 @@ class Gallery extends Component {
 
     getGallery() {
         const { id } = this.props.match.params;
-        fetch(`/api/v1/galleries/${id}`).then(response => response.json()).then(gallery => {
-            this.setState({gallery});
-        }).catch(console.error);
+        fetch(`/api/v1/galleries/${id}`)
+            .then(response => response.json())
+            .then(gallery => {
+                this.setState({ gallery });
+            })
+            .catch(console.error);
     }
 
     openLightbox(currentImage) {
@@ -46,28 +49,49 @@ class Gallery extends Component {
             currentImage: 0,
             viewerIsOpen: false
         });
-    };
+    }
 
     render() {
         const { gallery, currentImage, viewerIsOpen } = this.state;
-        const { galleryName, galleryDescription, releaseDate: releaseDateString, Tags: tags = [], Assets: assets = [] } = gallery;
+        const {
+            galleryName,
+            galleryDescription,
+            releaseDate: releaseDateString,
+            Tags: tags = [],
+            Assets: assets = []
+        } = gallery;
         const releaseDate = new Date(Date.parse(releaseDateString));
         return (
             <Gal
                 className="gallery text-left"
                 loading={false}
                 galleryName={<h4 id="gallery-name-text">{galleryName}</h4>}
-                galleryDescription={<span id="gallery-description-text"><strong>Description</strong>: {galleryDescription}</span>}
-                releaseDate={<span id="gallery-release-date-text">
-                    {releaseDate instanceof Date
-                        ? <h4><FontAwesomeIcon icon={faCalendar} /> {releaseDate.toLocaleDateString("en-US")}</h4>
-                        : null
-                    }
-                </span>}
-                tags={<div id="gallery-tags-text" className="badges-cloud">
-                    <FontAwesomeIcon icon={faTags} size="sm" /> <TagCloud tags={tags.map(({tag}) => tag)} />
-                </div>}
-                photos={assets.map(({filename, width, height}) => ({src: `/api/v1/image/${filename}`, width, height}))}
+                galleryDescription={
+                    <span id="gallery-description-text">
+                        <strong>Description</strong>: {galleryDescription}
+                    </span>
+                }
+                releaseDate={
+                    <span id="gallery-release-date-text">
+                        {releaseDate instanceof Date ? (
+                            <h4>
+                                <FontAwesomeIcon icon={faCalendar} />{" "}
+                                {releaseDate.toLocaleDateString("en-US")}
+                            </h4>
+                        ) : null}
+                    </span>
+                }
+                tags={
+                    <div id="gallery-tags-text" className="badges-cloud">
+                        <FontAwesomeIcon icon={faTags} size="sm" />{" "}
+                        <TagCloud tags={tags.map(({ tag }) => tag)} />
+                    </div>
+                }
+                photos={assets.map(({ filename, width, height }) => ({
+                    src: `/api/v1/image/${filename}`,
+                    width,
+                    height
+                }))}
                 onOpenCarousel={this.openLightbox}
                 closeLightbox={this.closeLightbox}
                 viewerIsOpen={viewerIsOpen}
@@ -75,7 +99,6 @@ class Gallery extends Component {
             />
         );
     }
-
 }
 
 export default withRouter(Gallery);
