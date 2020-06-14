@@ -51,7 +51,7 @@ class GowGallery extends Component {
                         onMakeFeaturedImage={onMakeFeaturedImage}
                         onSortEnd={onSortEnd}
                         axis={axis}
-                        targetRowHeight={containerWidth => (containerWidth/2)}
+                        targetRowHeight={containerWidth => containerWidth / 2}
                     />
                 );
             }
@@ -69,7 +69,7 @@ class GowGallery extends Component {
                             />
                         )}
                         axis={axis}
-                        targetRowHeight={containerWidth => (containerWidth/2)}
+                        targetRowHeight={containerWidth => containerWidth / 2}
                     />
                 );
             }

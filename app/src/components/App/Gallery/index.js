@@ -63,7 +63,11 @@ class Gallery extends Component {
             Assets: unorderedAssets = []
         } = gallery;
         const releaseDate = new Date(Date.parse(releaseDateString));
-        const assets = !assetOrder ? [] : assetOrder.split(",").map(gfsId => _.find(unorderedAssets, ua => ua.gfsId === gfsId));
+        const assets = !assetOrder
+            ? []
+            : assetOrder
+                  .split(",")
+                  .map(gfsId => _.find(unorderedAssets, ua => ua.gfsId === gfsId));
         return (
             <Gal
                 className="gallery text-left"

@@ -52,7 +52,10 @@ class Galleries extends Component {
                     ) => {
                         const releaseDate = new Date(Date.parse(releaseDateString));
                         const firstGfsId = assetOrder.split(",")[0];
-                        const galleryFirstAsset = _.find(assets, a => a.gfsId === firstGfsId);
+                        const galleryFirstAsset = _.find(
+                            assets,
+                            a => a.gfsId === firstGfsId
+                        );
                         return (
                             <NavLink
                                 to={`/gallery/${uuid}`}

@@ -1,3 +1,4 @@
+const debug = require("debug")("api:index_route");
 const express = require("express");
 const router = express.Router();
 const request = require("request");
@@ -104,56 +105,54 @@ router
     //         return res.status(401).send('User Not Authenticated');
     //     }
     //     next();
-    .post(upload.array("files[]", 1000),
-        async (req, res, next) => {
-            const {
+    .post(upload.array("files[]", 1000), async (req, res, next) => {
+        const {
+            galleryName,
+            galleryDescription,
+            releaseDate,
+            tags,
+            featuredImage: featuredImageString
+        } = req.body;
+        const featuredImage = JSON.parse(featuredImageString);
+        const { files } = req;
+
+        try {
+            const newGallery = await GalleryController.create({
                 galleryName,
                 galleryDescription,
                 releaseDate,
-                tags,
-                featuredImage: featuredImageString
-            } = req.body;
-            const featuredImage = JSON.parse(featuredImageString);
-            const { files } = req;
-
-            try {
-                const newGallery = await GalleryController.create({
-                    galleryName,
-                    galleryDescription,
-                    releaseDate,
-                    assetOrder: files.map(({ id }) => id).join(",")
+                assetOrder: files.map(({ id }) => id).join(",")
+            });
+            if (newGallery && newGallery.id) {
+                tags.forEach(async tag => {
+                    const newTag = await TagController.create({ tag });
+                    await TagController.addGallery(newTag.id, newGallery.id);
                 });
-                if (newGallery && newGallery.id) {
-                    tags.forEach(async tag => {
-                        const newTag = await TagController.create({ tag });
-                        await TagController.addGallery(newTag.id, newGallery.id);
-                    });
-                    files.forEach(
-                        async ({
-                            id: gfsId,
+                files.forEach(
+                    async ({
+                        id: gfsId,
+                        filename,
+                        metadata: { width, height, scaleRatio, md5 },
+                        contentType
+                    }) => {
+                        const newAsset = await AssetController.create({
+                            gfsId,
                             filename,
-                            metadata: { width, height, scaleRatio, md5 },
+                            width,
+                            height,
                             contentType
-                        }) => {
-                            const newAsset = await AssetController.create({
-                                gfsId,
-                                filename,
-                                width,
-                                height,
-                                contentType
-                            });
-                            await AssetController.addGallery(newAsset.id, newGallery.id);
-                        }
-                    );
+                        });
+                        await AssetController.addGallery(newAsset.id, newGallery.id);
+                    }
+                );
 
-                    res.send({ galleryId: newGallery.uuid });
-                }
-            } catch (err) {
-                // console.log(err);
-                res.status(400).send("Bad Request");
+                res.send({ galleryId: newGallery.uuid });
             }
+        } catch (err) {
+            debug(err);
+            res.status(400).send("Bad Request");
         }
-    );
+    });
 
 router.route("/galleries/all").get(async (req, res, next) => {
     const galleries = await GalleryController.findAll();
