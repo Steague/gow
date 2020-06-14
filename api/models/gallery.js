@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
             assetOrder: {
                 allowNull: false,
                 type: DataTypes.STRING(33 * 1000 - 1) // 1000x MD5 hashes w/ delimiters
+            },
+            featuredImage: {
+                allowNull: false,
+                type: DataTypes.STRING(32)
             }
         },
         {

@@ -30,6 +30,10 @@ module.exports = {
                     allowNull: false,
                     type: Sequelize.STRING(33 * 1000 - 1) // 1000x MD5 hashes w/ delimiters
                 },
+                featuredImage: {
+                    allowNull: false,
+                    type: Sequelize.STRING(32)
+                },
                 createdAt: {
                     allowNull: false,
                     type: Sequelize.DATE,

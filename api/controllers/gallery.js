@@ -9,14 +9,15 @@ exports.create = gallery =>
         galleryName: gallery.galleryName,
         galleryDescription: gallery.galleryDescription,
         releaseDate: gallery.releaseDate,
-        assetOrder: gallery.assetOrder
+        assetOrder: gallery.assetOrder,
+        featuredImage: gallery.featuredImage.toString()
     })
         .then(gallery => {
-            debug(">> Created Gallery: " + JSON.stringify(gallery, null, 4));
+            console.log(">> Created Gallery: " + JSON.stringify(gallery, null, 4));
             return gallery;
         })
         .catch(err => {
-            debug(">> Error while creating Gallery: ", err);
+            console.log(">> Error while creating Gallery: ", err);
         });
 
 exports.findAll = () =>
@@ -25,7 +26,7 @@ exports.findAll = () =>
             {
                 model: Tag,
                 as: "Tags",
-                attributes: ["id", "tag"],
+                attributes: ["tag", "type"],
                 through: {
                     attributes: []
                 }
@@ -48,7 +49,7 @@ exports.findAll = () =>
     })
         .then(galleries => galleries)
         .catch(err => {
-            debug(">> Error while retrieving galleries: ", err);
+            console.log(">> Error while retrieving galleries: ", err);
         });
 
 exports.findById = id =>
@@ -57,7 +58,7 @@ exports.findById = id =>
             {
                 model: Tag,
                 as: "Tags",
-                attributes: ["id", "tag"],
+                attributes: ["tag", "type"],
                 through: {
                     attributes: []
                 }
@@ -80,7 +81,7 @@ exports.findById = id =>
     })
         .then(gallery => gallery)
         .catch(err => {
-            debug(">> Error while finding Gallery: ", err);
+            console.log(">> Error while finding Gallery: ", err);
         });
 
 exports.findByUuid = id =>
@@ -92,7 +93,7 @@ exports.findByUuid = id =>
             {
                 model: Tag,
                 as: "Tags",
-                attributes: ["tag"],
+                attributes: ["tag", "type"],
                 through: {
                     attributes: []
                 }
@@ -108,9 +109,9 @@ exports.findByUuid = id =>
         ]
     })
         .then(gallery => {
-            debug({ gallery });
+            console.log({ gallery });
             return gallery;
         })
         .catch(err => {
-            debug(">> Error while finding Gallery: ", err);
+            console.log(">> Error while finding Gallery: ", err);
         });

@@ -6,6 +6,11 @@ module.exports = (sequelize, DataTypes) => {
             tag: {
                 allowNull: false,
                 type: DataTypes.STRING
+            },
+            type: {
+                allowNull: false,
+                type: DataTypes.ENUM(['default', 'model']),
+                defaultValue: "default"
             }
         },
         {

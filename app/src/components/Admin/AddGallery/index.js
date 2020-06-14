@@ -60,7 +60,8 @@ class AdGallery extends Component {
                 aspect: 1 / 1
             },
             showCrop: false,
-            croppedImage: null
+            croppedImage: null,
+            croppedImageCanvas: null
         };
 
         this.getImage = this.getImage.bind(this);
@@ -121,7 +122,9 @@ class AdGallery extends Component {
                             canvas.width,
                             canvas.height
                         );
-                        resolve(canvas.toDataURL());
+                        this.setState({
+                            croppedImageCanvas : canvas
+                        }, () => resolve(canvas.toDataURL()));
                     };
 
                     img.src = fr.result; // is the data URL because called with readAsDataURL
@@ -160,24 +163,29 @@ class AdGallery extends Component {
                 releaseDate,
                 tags,
                 featuredImage,
-                crop
+                crop,
+                croppedImageCanvas
             } = this.state;
-            const upload = () => {
+            const upload = async () => {
                 const data = new FormData();
                 photos.forEach(
                     (
-                        { originalWidth: width, originalHeight: height, scaleRatio, md5 },
+                        { file, originalWidth: width, originalHeight: height, scaleRatio, md5 },
                         i
                     ) => {
                         data.append(
                             `metadata[]`,
-                            `${width}:${height}:${scaleRatio}:${md5}`
+                            JSON.stringify({
+                                width,
+                                height,
+                                scaleRatio,
+                                md5,
+                                fieldname: `file-${i}`
+                            })
                         );
+                        data.append(`file-${i}`, file);
                     }
                 );
-                photos.forEach(({ file }, i) => {
-                    data.append(`files[]`, file);
-                });
                 data.append("galleryName", galleryName);
                 data.append("galleryDescription", galleryDescription);
                 data.append("releaseDate", releaseDate);
@@ -185,9 +193,30 @@ class AdGallery extends Component {
                     "featuredImage",
                     JSON.stringify({
                         featuredImage,
-                        crop
+                        crop,
+                        croppedImage: "croppedImage" // name of the form param
                     })
                 );
+                data.append(
+                    `metadata[]`,
+                    JSON.stringify({
+                        width: parseInt(photos[featuredImage].originalWidth * (crop.width*0.01)),
+                        height: parseInt(photos[featuredImage].originalHeight * (crop.height*0.01)),
+                        fieldname: "croppedImage"
+                    })
+                );
+                const croppedImageBlob = () => new Promise((resolve, reject) => {
+                    try {
+                        croppedImageCanvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.95);
+                    } catch(e) {
+                        reject(e);
+                    }
+                });
+                try {
+                    data.append(`croppedImage`, await croppedImageBlob(), 'cropped.jpg');
+                } catch(e) {
+                    console.error(e);
+                }
                 tags.forEach(tag => {
                     data.append("tags[]", tag);
                 });

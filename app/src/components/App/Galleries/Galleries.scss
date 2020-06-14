@@ -1,15 +1,23 @@
 .galleries {
     padding-top: 20px;
-    > a.text-info {
+    > div > div > a.text-info {
         color: inherit !important;
         &:hover {
             text-decoration: none;
             color: inherit !important;
         }
     }
-
+    // .gallery-card-header {
+    //     padding-left: 0;
+    //     .gallery-card-header-row {
+    //         .gallery-card-header-column-image {
+    //             .card-img-top {
+    //                 margin-top: -12px;
+    //                 margin-bottom: -112px;
+    //             }
+    //         }
+    //     }
+    // }
     .card-img-top {
-        padding: 0 2px 2px 2px;
-        position: relative;
     }
 }

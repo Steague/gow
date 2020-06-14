@@ -11,6 +11,7 @@ const md5File = require("md5-file");
 const crypto = require("crypto");
 const path = require("path");
 const GridFsStorage = require("multer-gridfs-storage");
+const _ = require("lodash");
 
 const db = require("../models");
 const GalleryController = require("../controllers/gallery");
@@ -25,11 +26,20 @@ const storage = new GridFsStorage({
             crypto.randomBytes(16, (err, buf) => {
                 if (err) return reject(err);
                 const filename = buf.toString("hex") + path.extname(file.originalname);
-                const { metadata } = req.body;
+                const { metadata: metadataJson } = req.body;
+                const metadata = metadataJson.map(md => JSON.parse(md));
                 const { files } = req;
-                const [width, height, scaleRatio, md5] = metadata[files.length - 1].split(
-                    ":"
-                );
+                // if (file.fieldname === "croppedImage") {
+                //     const fileInfo = {
+                //         filename: filename,
+                //         bucketName: "uploads",
+                //         metadata: {
+                //             fieldname: "croppedImage"
+                //         }
+                //     };
+                //     return resolve(fileInfo);
+                // }
+                const {width, height, scaleRatio, md5, fieldname} = _.find(metadata, md => (md.fieldname === file.fieldname));
                 const fileInfo = {
                     filename: filename,
                     bucketName: "uploads",
@@ -37,7 +47,8 @@ const storage = new GridFsStorage({
                         width,
                         height,
                         scaleRatio,
-                        md5
+                        md5,
+                        fieldname
                     }
                 };
                 resolve(fileInfo);
@@ -46,7 +57,15 @@ const storage = new GridFsStorage({
     }
 });
 
-const upload = multer({ storage });
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image")) {
+        cb(null, true);
+    } else {
+        cb("Please upload only images.", false);
+    }
+};
+
+const upload = multer({ storage, fileFilter: multerFilter });
 
 const verifyGoogleToken = (req, res, next) => {
     const tokens = req.headers.authorization.split(", ");
@@ -105,23 +124,48 @@ router
     //         return res.status(401).send('User Not Authenticated');
     //     }
     //     next();
-    .post(upload.array("files[]", 1000), async (req, res, next) => {
-        const {
-            galleryName,
-            galleryDescription,
-            releaseDate,
-            tags,
-            featuredImage: featuredImageString
-        } = req.body;
-        const featuredImage = JSON.parse(featuredImageString);
-        const { files } = req;
-
+    .post(upload.any(), async (req, res, next) => {
         try {
+            const {
+                galleryName,
+                galleryDescription,
+                releaseDate,
+                tags,
+                featuredImage: featuredImageJson
+            } = req.body;
+            const featuredImage = JSON.parse(featuredImageJson);
+            const { files } = req;
+
+            const assetOrderMap = [];
+            files.forEach(({ id, fieldname }) => {
+                if (fieldname !== featuredImage.croppedImage) {
+                    assetOrderMap.push(id);
+                }
+            });
+            const assetOrder = assetOrderMap.join(",");
+            const featuredImageFile = _.find(files, f => (f.fieldname === featuredImage.croppedImage));
+            console.log({
+                // galleryName,
+                // galleryDescription,
+                // releaseDate,
+                // tags,
+                // assetOrder,
+                // featuredImage,
+                // featuredImageFile,
+                // files
+                featuredImageFile,
+                galleryName,
+                galleryDescription,
+                releaseDate,
+                assetOrder,
+                featuredImage: featuredImageFile.id
+            });
             const newGallery = await GalleryController.create({
                 galleryName,
                 galleryDescription,
                 releaseDate,
-                assetOrder: files.map(({ id }) => id).join(",")
+                assetOrder,
+                featuredImage: featuredImageFile.id
             });
             if (newGallery && newGallery.id) {
                 tags.forEach(async tag => {
@@ -146,11 +190,15 @@ router
                     }
                 );
 
-                res.send({ galleryId: newGallery.uuid });
+                res.status(201).send({ galleryId: newGallery.uuid });
+            } else {
+                console.log(newGallery);
+                res.status(400).send({message: "Unabble to create gallery"});
             }
+            // res.send({message: "OK"});
         } catch (err) {
-            debug(err);
-            res.status(400).send("Bad Request");
+            console.log(err);
+            res.status(400).send({message: "Bad Request"});
         }
     });
 

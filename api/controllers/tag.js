@@ -3,9 +3,10 @@ const db = require("../models");
 const Gallery = db.Gallery;
 const Tag = db.Tag;
 
-exports.create = tag =>
+exports.create = (tag, type) =>
     Tag.create({
-        tag: tag.tag
+        tag: tag.tag,
+        type: tag.type
     })
         .then(tag => {
             debug(">> Created Tag: " + JSON.stringify(tag, null, 2));
