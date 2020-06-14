@@ -5,7 +5,7 @@ import SortablePhoto from "../SortablePhoto";
 
 class SortableGallery extends Component {
     render() {
-        const { photos, onOpenCarousel, onRemoveImage, onMakeFeaturedImage } = this.props;
+        const { photos, onOpenCarousel, onRemoveImage, onMakeFeaturedImage, targetRowHeight } = this.props;
         return (
             <Gallery
                 photos={photos}
@@ -23,6 +23,7 @@ class SortableGallery extends Component {
                         }
                     />
                 )}
+                targetRowHeight={targetRowHeight}
             />
         );
     }

@@ -104,11 +104,7 @@ router
     //         return res.status(401).send('User Not Authenticated');
     //     }
     //     next();
-    .post(
-        (req, res, next) => {
-            next();
-        },
-        upload.array("files[]", 1000),
+    .post(upload.array("files[]", 1000),
         async (req, res, next) => {
             const {
                 galleryName,

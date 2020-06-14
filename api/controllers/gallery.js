@@ -36,7 +36,7 @@ exports.findAll = () =>
             {
                 model: Asset,
                 as: "Assets",
-                attributes: ["id", "gfsId", "filename", "width", "height", "contentType"],
+                attributes: ["gfsId", "filename", "width", "height"],
                 through: {
                     attributes: []
                 }
@@ -68,7 +68,7 @@ exports.findById = id =>
             {
                 model: Asset,
                 as: "Assets",
-                attributes: ["id", "gfsId", "filename", "width", "height", "contentType"],
+                attributes: ["gfsId", "filename", "width", "height"],
                 through: {
                     attributes: []
                 }

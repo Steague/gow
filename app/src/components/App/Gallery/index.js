@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import TagCloud from "../../TagCloud";
 import Gal from "../../Gallery";
+import _ from "lodash";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTags, faCalendar } from "@fortawesome/pro-solid-svg-icons";
@@ -56,11 +57,13 @@ class Gallery extends Component {
         const {
             galleryName,
             galleryDescription,
+            assetOrder = null,
             releaseDate: releaseDateString,
             Tags: tags = [],
-            Assets: assets = []
+            Assets: unorderedAssets = []
         } = gallery;
         const releaseDate = new Date(Date.parse(releaseDateString));
+        const assets = !assetOrder ? [] : assetOrder.split(",").map(gfsId => _.find(unorderedAssets, ua => ua.gfsId === gfsId));
         return (
             <Gal
                 className="gallery text-left"

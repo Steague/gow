@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import TagCloud from "../../TagCloud";
+import _ from "lodash";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTags, faCalendar } from "@fortawesome/pro-solid-svg-icons";
@@ -42,6 +43,7 @@ class Galleries extends Component {
                             uuid,
                             galleryName,
                             galleryDescription,
+                            assetOrder,
                             releaseDate: releaseDateString,
                             Tags: tags,
                             Assets: assets
@@ -49,6 +51,8 @@ class Galleries extends Component {
                         i
                     ) => {
                         const releaseDate = new Date(Date.parse(releaseDateString));
+                        const firstGfsId = assetOrder.split(",")[0];
+                        const galleryFirstAsset = _.find(assets, a => a.gfsId === firstGfsId);
                         return (
                             <NavLink
                                 to={`/gallery/${uuid}`}
@@ -94,8 +98,8 @@ class Galleries extends Component {
                                         </Row>
                                     </Card.Body>
                                     <Card.Img
-                                        variant="top"
-                                        src={`/api/v1/image/${assets[0].filename}`}
+                                        variant="bottom"
+                                        src={`/api/v1/image/${galleryFirstAsset.filename}`}
                                     />
                                 </Card>
                             </NavLink>
