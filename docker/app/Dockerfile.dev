@@ -1,10 +1,16 @@
 FROM node:alpine
 
+ARG NPM_TOKEN
+ENV NPM_TOKEN $NPM_TOKEN
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-COPY . /app
+COPY ./app/docker.npmrc ./.npmrc
+COPY ./app/package.json .
+COPY ./app/yarn.lock .
 RUN yarn --pure-lockfile
+RUN rm -f .npmrc
+COPY ./app/. .
 
 EXPOSE 3000
-CMD ["npm", "rebuild", "node-sass"]
 CMD ["yarn", "start"]

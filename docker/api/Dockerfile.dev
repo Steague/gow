@@ -1,9 +1,9 @@
 FROM node:alpine
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-COPY . /app
+WORKDIR /usr/src/api
+COPY ./api/package.json ./api/yarn.lock ./
 RUN yarn --pure-lockfile
+COPY ./api ./
 
 EXPOSE 8080
 CMD ["yarn", "serve"]

@@ -30,6 +30,8 @@ services:
         build:
             context: ../.
             dockerfile: docker/app/Dockerfile.dev
+            args:
+                NPM_TOKEN: "${NPM_TOKEN}"
         image: gow:app
         environment:
             - NODE_ENV=development
@@ -64,7 +66,7 @@ services:
             - gfs:gfs
         volumes:
             - ./../api:/usr/src/api
-            - /usr/src/app/node_modules/
+            - /usr/src/api/node_modules/
         ports:
             - "8080"
         depends_on:
