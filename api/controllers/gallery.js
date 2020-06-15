@@ -13,11 +13,11 @@ exports.create = gallery =>
         featuredImage: gallery.featuredImage.toString()
     })
         .then(gallery => {
-            console.log(">> Created Gallery: " + JSON.stringify(gallery, null, 4));
+            debug(">> Created Gallery: " + JSON.stringify(gallery, null, 4));
             return gallery;
         })
         .catch(err => {
-            console.log(">> Error while creating Gallery: ", err);
+            debug(">> Error while creating Gallery: ", err);
         });
 
 exports.findAll = () =>
@@ -49,7 +49,7 @@ exports.findAll = () =>
     })
         .then(galleries => galleries)
         .catch(err => {
-            console.log(">> Error while retrieving galleries: ", err);
+            debug(">> Error while retrieving galleries: ", err);
         });
 
 exports.findById = id =>
@@ -81,7 +81,7 @@ exports.findById = id =>
     })
         .then(gallery => gallery)
         .catch(err => {
-            console.log(">> Error while finding Gallery: ", err);
+            debug(">> Error while finding Gallery: ", err);
         });
 
 exports.findByUuid = id =>
@@ -109,9 +109,9 @@ exports.findByUuid = id =>
         ]
     })
         .then(gallery => {
-            console.log({ gallery });
+            debug({ gallery });
             return gallery;
         })
         .catch(err => {
-            console.log(">> Error while finding Gallery: ", err);
+            debug(">> Error while finding Gallery: ", err);
         });

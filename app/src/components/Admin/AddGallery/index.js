@@ -312,7 +312,9 @@ class AdGallery extends Component {
     }
 
     onRemoveImage(pIndex) {
-        this.setState({ photos: _.remove(this.state.photos, (p, i) => i !== pIndex) });
+        this.setState({
+            photos: _.remove(this.state.photos, (p, i) => i !== pIndex)
+        });
     }
 
     openLightbox(currentImage) {
@@ -564,7 +566,9 @@ class AdGallery extends Component {
                                                     await confirm(
                                                         <img
                                                             alt="Crop"
-                                                            style={{ maxWidth: "100%" }}
+                                                            style={{
+                                                                maxWidth: "100%"
+                                                            }}
                                                             src={croppedImage}
                                                         />,
                                                         "OK",
