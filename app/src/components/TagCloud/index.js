@@ -25,7 +25,13 @@ class TagCloud extends Component {
         return (
             <span>
                 {tags.map((w, i) => (
-                    <TagWrapper pill key={`tag-${i}`} index={i} variant="primary">
+                    <TagWrapper
+                        pill
+                        key={`tag-${i}`}
+                        index={i}
+                        variant="primary"
+                        className="border border-light"
+                    >
                         <span>
                             {removeable ? (
                                 <span>

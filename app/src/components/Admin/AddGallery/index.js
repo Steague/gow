@@ -616,7 +616,7 @@ class AdGallery extends Component {
                                             </h4>
                                         }
                                         input={({ onConfirm }) => (
-                                            <InputGroup className="mb-1">
+                                            <InputGroup>
                                                 <FormControl
                                                     placeholder="Title"
                                                     aria-label="Title"
@@ -658,13 +658,12 @@ class AdGallery extends Component {
                                         inputId="gallery-description-input"
                                         text={
                                             <span id="gallery-description-text">
-                                                <strong>Description</strong>:{" "}
                                                 {galleryDescription ||
                                                     "No description currently."}
                                             </span>
                                         }
                                         input={({ onConfirm }) => (
-                                            <InputGroup className="mb-1">
+                                            <InputGroup>
                                                 <FormControl
                                                     placeholder="Description"
                                                     aria-label="Description"
@@ -721,7 +720,7 @@ class AdGallery extends Component {
                                             </span>
                                         }
                                         input={({ onConfirm }) => (
-                                            <InputGroup className="mb-1">
+                                            <InputGroup>
                                                 <FormControl
                                                     as={DatePicker}
                                                     selected={releaseDate}
@@ -755,17 +754,19 @@ class AdGallery extends Component {
                                         text={
                                             <div
                                                 id="gallery-tags-text"
-                                                className="badges-cloud"
+                                                className="badges-cloud text-right"
                                             >
-                                                <FontAwesomeIcon
-                                                    icon={faTags}
-                                                    size="sm"
-                                                />{" "}
-                                                <TagCloud tags={tags} />
+                                                <span>
+                                                    <FontAwesomeIcon
+                                                        icon={faTags}
+                                                        size="sm"
+                                                    />{" "}
+                                                    <TagCloud tags={tags} />
+                                                </span>
                                             </div>
                                         }
                                         input={({ onConfirm }) => (
-                                            <InputGroup className="mb-1">
+                                            <InputGroup>
                                                 <FormControl
                                                     placeholder="Add tag"
                                                     aria-label="Add tag"

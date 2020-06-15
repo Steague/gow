@@ -4,9 +4,6 @@ import { NavLink } from "react-router-dom";
 import TagCloud from "../../TagCloud";
 import _ from "lodash";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar } from "@fortawesome/pro-solid-svg-icons";
-
 import "./Galleries.scss";
 
 class Galleries extends Component {
@@ -18,6 +15,7 @@ class Galleries extends Component {
         };
 
         this.getGalleries = this.getGalleries.bind(this);
+        this.fittext = this.fitext.bind(this);
     }
 
     componentDidMount() {
@@ -31,6 +29,64 @@ class Galleries extends Component {
                 this.setState({ galleries });
             })
             .catch(console.error);
+    }
+
+    componentDidUpdate() {
+        this.fitext();
+    }
+
+    fitext(cssClass = "fit-this-text", stagger = 1, wideable = true) {
+        Array.from(document.getElementsByClassName(cssClass)).forEach(box => {
+            if (
+                !box.firstElementChild ||
+                !/fitter/.test(box.firstElementChild.className)
+            ) {
+                box.innerHTML = `<div class='fitter'>${box.innerHTML}</div>`;
+            }
+
+            const FITTER = box.firstElementChild,
+                CHILDREN = Array.from(box.getElementsByTagName("*")),
+                overflowing = () => {
+                    const BOX_PADDING_TOP = parseFloat(getComputedStyle(box).paddingTop),
+                        BOX_PADDING_BOTTOM = parseFloat(
+                            getComputedStyle(box).paddingBottom
+                        ),
+                        NORMALIZED_BOX_HEIGHT =
+                            box.offsetHeight - (BOX_PADDING_TOP + BOX_PADDING_BOTTOM);
+                    return Math.ceil(FITTER.offsetHeight - NORMALIZED_BOX_HEIGHT);
+                },
+                update_font_size = (child, reversed) =>
+                    (child.style.fontSize = `${
+                        parseFloat(getComputedStyle(child).fontSize) +
+                        (reversed ? -stagger : stagger)
+                    }px`);
+
+            CHILDREN.forEach(child => {
+                if (!child.dataset.size)
+                    child.dataset.size = getComputedStyle(child).fontSize;
+            });
+
+            const execCore = () => {
+                while (overflowing() < stagger * 1.5 && overflowing() !== 0)
+                    CHILDREN.forEach(child => {
+                        if (
+                            wideable ||
+                            parseFloat(child.style.fontSize) + stagger <
+                                parseFloat(child.dataset.size)
+                        ) {
+                            update_font_size(child);
+                        } else {
+                            child.style.removeProperty("font-size");
+                        }
+                    });
+
+                while (overflowing() > stagger * 1.5)
+                    CHILDREN.forEach(child => update_font_size(child, true));
+            };
+
+            execCore();
+            window.addEventListener("resize", execCore);
+        });
     }
 
     render() {
@@ -52,7 +108,6 @@ class Galleries extends Component {
                             },
                             i
                         ) => {
-                            const releaseDate = new Date(Date.parse(releaseDateString));
                             const galleryFirstAsset = _.find(
                                 assets,
                                 a => a.gfsId === featuredImage
@@ -69,49 +124,27 @@ class Galleries extends Component {
                                         to={`/gallery/${uuid}`}
                                         className="text-info"
                                     >
-                                        <Card className="text-left border-primary mb-3">
+                                        <Card className="border border-light">
                                             <Card.Img
                                                 variant="top"
                                                 src={`/api/v1/image/${galleryFirstAsset.filename}`}
                                             />
                                             <Card.Header
-                                                as="span"
-                                                className="gallery-card-header"
+                                                as="h4"
+                                                className="gallery-card-header fit-this-text"
                                             >
-                                                <Row className="gallery-card-header-row">
-                                                    <Col xs={6}>{galleryName}</Col>
-                                                    <Col xs={6} className="text-right">
-                                                        {releaseDate instanceof Date ? (
-                                                            <span>
-                                                                <FontAwesomeIcon
-                                                                    icon={faCalendar}
-                                                                />{" "}
-                                                                {releaseDate.toLocaleDateString(
-                                                                    "en-US"
-                                                                )}
-                                                            </span>
-                                                        ) : null}
-                                                    </Col>
-                                                </Row>
+                                                {galleryName}
                                             </Card.Header>
                                             <Card.Body>
-                                                <Row>
-                                                    <Col xs={12} lg={7}>
-                                                        {galleryDescription}
-                                                    </Col>
-                                                    <Col
-                                                        xs={12}
-                                                        lg={5}
-                                                        className="badges-cloud text-right"
-                                                    >
-                                                        <TagCloud
-                                                            tags={tags.map(
-                                                                ({ tag }) => tag
-                                                            )}
-                                                        />
-                                                    </Col>
-                                                </Row>
+                                                <Card.Text>
+                                                    {galleryDescription}
+                                                </Card.Text>
                                             </Card.Body>
+                                            <Card.Footer className="badges-cloud align-item-start justify-content-center">
+                                                <TagCloud
+                                                    tags={tags.map(({ tag }) => tag)}
+                                                />
+                                            </Card.Footer>
                                         </Card>
                                     </NavLink>
                                 </Col>

@@ -7,6 +7,7 @@ import { faEyeSlash } from "@fortawesome/pro-solid-svg-icons";
 import Gallery from "react-photo-gallery";
 import SortableGallery from "./SortableGallery";
 import Photo from "./Photo";
+import { Scrollbars } from "react-custom-scrollbars";
 
 class GowGallery extends Component {
     getGalleryState() {
@@ -106,7 +107,7 @@ class GowGallery extends Component {
 
         return (
             <Container className={className}>
-                <Card className="text-left border-primary mb-3">
+                <Card className="text-left border border-light">
                     <Card.Header as="h4">
                         <Row>
                             <Col xs={9}>{galleryName}</Col>
@@ -116,14 +117,38 @@ class GowGallery extends Component {
                         </Row>
                     </Card.Header>
                     <Card.Body>
-                        <Row>
-                            <Col xs={9}>{galleryDescription}</Col>
-                            <Col xs={3} className="badges-cloud text-right">
-                                {tags}
-                            </Col>
-                        </Row>
+                        <div className="card-text">{galleryDescription}</div>
+                        <Scrollbars
+                            className="gallery-images"
+                            style={{
+                                width: "calc(100% + 2.5rem)",
+                                height: "calc(100% + 1.2rem)"
+                            }}
+                            renderTrackHorizontal={props => (
+                                <div {...props} className="track-horizontal" />
+                            )}
+                            renderTrackVertical={props => (
+                                <div {...props} className="track-vertical" />
+                            )}
+                            renderThumbHorizontal={props => (
+                                <div
+                                    {...props}
+                                    className="thumb-horizontal border border-light bg-dark"
+                                />
+                            )}
+                            renderThumbVertical={props => (
+                                <div
+                                    {...props}
+                                    className="thumb-vertical border border-light bg-dark"
+                                />
+                            )}
+                        >
+                            {this.getGalleryState()}
+                        </Scrollbars>
                     </Card.Body>
-                    {this.getGalleryState()}
+                    <Card.Footer xs={3} className="badges-cloud text-right">
+                        {tags}
+                    </Card.Footer>
                 </Card>
                 <ModalGateway>
                     {viewerIsOpen ? (

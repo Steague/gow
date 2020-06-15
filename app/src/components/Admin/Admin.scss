@@ -54,7 +54,12 @@
 }
 
 .badges-cloud {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: flex-start;
+    line-height: calc(1.5rem - 2px);
     .badge {
-        margin-right: 2px;
+        margin-right: 0.2rem;
     }
 }

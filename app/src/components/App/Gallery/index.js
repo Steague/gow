@@ -74,9 +74,7 @@ class Gallery extends Component {
                 loading={false}
                 galleryName={<h4 id="gallery-name-text">{galleryName}</h4>}
                 galleryDescription={
-                    <span id="gallery-description-text">
-                        <strong>Description</strong>: {galleryDescription}
-                    </span>
+                    <span id="gallery-description-text">{galleryDescription}</span>
                 }
                 releaseDate={
                     <span id="gallery-release-date-text">
@@ -90,8 +88,10 @@ class Gallery extends Component {
                 }
                 tags={
                     <div id="gallery-tags-text" className="badges-cloud">
-                        <FontAwesomeIcon icon={faTags} size="sm" />{" "}
-                        <TagCloud tags={tags.map(({ tag }) => tag)} />
+                        <span>
+                            <FontAwesomeIcon icon={faTags} size="sm" />{" "}
+                            <TagCloud tags={tags.map(({ tag }) => tag)} />
+                        </span>
                     </div>
                 }
                 photos={assets.map(({ filename, width, height }) => ({

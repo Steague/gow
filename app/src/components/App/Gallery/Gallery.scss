@@ -1,3 +1,59 @@
 .gallery {
-    padding-top: 20px;
+    padding-top: 1.5rem;
+    height: 100%;
+    > .card {
+        height: 100%;
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            .gallery-images {
+                margin: 0 -1.2rem;
+                flex-grow: 1;
+                margin-top: 1.2rem;
+                margin-bottom: -1.2rem;
+                position: relative;
+                overflow: hidden;
+                width: calc(100% + 2.5rem);
+            }
+        }
+    }
+
+    .track-horizontal {
+        position: absolute;
+        height: 6px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
+        border-radius: 3px;
+    }
+
+    .thumb-horizontal {
+        position: relative;
+        display: block;
+        height: 100%;
+        cursor: pointer;
+        border-radius: inherit;
+        opacity: 0.6;
+        width: 0px;
+    }
+
+    .track-vertical {
+        position: absolute;
+        width: 6px;
+        right: 2px;
+        bottom: 2px;
+        top: 2px;
+        border-radius: 3px;
+    }
+
+    .thumb-vertical {
+        position: relative;
+        display: block;
+        width: 100%;
+        cursor: pointer;
+        border-radius: inherit;
+        opacity: 0.6;
+        height: 52px;
+        transform: translateY(0px);
+    }
 }
