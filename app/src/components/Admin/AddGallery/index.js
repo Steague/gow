@@ -122,9 +122,12 @@ class AdGallery extends Component {
                             canvas.width,
                             canvas.height
                         );
-                        this.setState({
-                            croppedImageCanvas : canvas
-                        }, () => resolve(canvas.toDataURL()));
+                        this.setState(
+                            {
+                                croppedImageCanvas: canvas
+                            },
+                            () => resolve(canvas.toDataURL())
+                        );
                     };
 
                     img.src = fr.result; // is the data URL because called with readAsDataURL
@@ -170,7 +173,13 @@ class AdGallery extends Component {
                 const data = new FormData();
                 photos.forEach(
                     (
-                        { file, originalWidth: width, originalHeight: height, scaleRatio, md5 },
+                        {
+                            file,
+                            originalWidth: width,
+                            originalHeight: height,
+                            scaleRatio,
+                            md5
+                        },
                         i
                     ) => {
                         data.append(
@@ -200,21 +209,30 @@ class AdGallery extends Component {
                 data.append(
                     `metadata[]`,
                     JSON.stringify({
-                        width: parseInt(photos[featuredImage].originalWidth * (crop.width*0.01)),
-                        height: parseInt(photos[featuredImage].originalHeight * (crop.height*0.01)),
+                        width: parseInt(
+                            photos[featuredImage].originalWidth * (crop.width * 0.01)
+                        ),
+                        height: parseInt(
+                            photos[featuredImage].originalHeight * (crop.height * 0.01)
+                        ),
                         fieldname: "croppedImage"
                     })
                 );
-                const croppedImageBlob = () => new Promise((resolve, reject) => {
-                    try {
-                        croppedImageCanvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.95);
-                    } catch(e) {
-                        reject(e);
-                    }
-                });
+                const croppedImageBlob = () =>
+                    new Promise((resolve, reject) => {
+                        try {
+                            croppedImageCanvas.toBlob(
+                                blob => resolve(blob),
+                                "image/jpeg",
+                                0.95
+                            );
+                        } catch (e) {
+                            reject(e);
+                        }
+                    });
                 try {
-                    data.append(`croppedImage`, await croppedImageBlob(), 'cropped.jpg');
-                } catch(e) {
+                    data.append(`croppedImage`, await croppedImageBlob(), "cropped.jpg");
+                } catch (e) {
                     console.error(e);
                 }
                 tags.forEach(tag => {

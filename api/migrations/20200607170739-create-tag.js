@@ -14,7 +14,7 @@ module.exports = {
             },
             type: {
                 allowNull: false,
-                type: Sequelize.ENUM(['default', 'model']),
+                type: Sequelize.ENUM(["default", "model"]),
                 defaultValue: "default"
             },
             createdAt: {

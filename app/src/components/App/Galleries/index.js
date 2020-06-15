@@ -74,7 +74,10 @@ class Galleries extends Component {
                                                 variant="top"
                                                 src={`/api/v1/image/${galleryFirstAsset.filename}`}
                                             />
-                                            <Card.Header as="span" className="gallery-card-header">
+                                            <Card.Header
+                                                as="span"
+                                                className="gallery-card-header"
+                                            >
                                                 <Row className="gallery-card-header-row">
                                                     <Col xs={6}>{galleryName}</Col>
                                                     <Col xs={6} className="text-right">
@@ -97,11 +100,14 @@ class Galleries extends Component {
                                                         {galleryDescription}
                                                     </Col>
                                                     <Col
-                                                         xs={12} lg={5}
+                                                        xs={12}
+                                                        lg={5}
                                                         className="badges-cloud text-right"
                                                     >
                                                         <TagCloud
-                                                            tags={tags.map(({ tag }) => tag)}
+                                                            tags={tags.map(
+                                                                ({ tag }) => tag
+                                                            )}
                                                         />
                                                     </Col>
                                                 </Row>
@@ -112,7 +118,7 @@ class Galleries extends Component {
                             );
                         }
                     )}
-                </Row>>
+                </Row>
             </Container>
         );
     }

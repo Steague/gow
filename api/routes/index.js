@@ -29,17 +29,10 @@ const storage = new GridFsStorage({
                 const { metadata: metadataJson } = req.body;
                 const metadata = metadataJson.map(md => JSON.parse(md));
                 const { files } = req;
-                // if (file.fieldname === "croppedImage") {
-                //     const fileInfo = {
-                //         filename: filename,
-                //         bucketName: "uploads",
-                //         metadata: {
-                //             fieldname: "croppedImage"
-                //         }
-                //     };
-                //     return resolve(fileInfo);
-                // }
-                const {width, height, scaleRatio, md5, fieldname} = _.find(metadata, md => (md.fieldname === file.fieldname));
+                const { width, height, scaleRatio, md5, fieldname } = _.find(
+                    metadata,
+                    md => md.fieldname === file.fieldname
+                );
                 const fileInfo = {
                     filename: filename,
                     bucketName: "uploads",
@@ -143,23 +136,10 @@ router
                 }
             });
             const assetOrder = assetOrderMap.join(",");
-            const featuredImageFile = _.find(files, f => (f.fieldname === featuredImage.croppedImage));
-            console.log({
-                // galleryName,
-                // galleryDescription,
-                // releaseDate,
-                // tags,
-                // assetOrder,
-                // featuredImage,
-                // featuredImageFile,
-                // files
-                featuredImageFile,
-                galleryName,
-                galleryDescription,
-                releaseDate,
-                assetOrder,
-                featuredImage: featuredImageFile.id
-            });
+            const featuredImageFile = _.find(
+                files,
+                f => f.fieldname === featuredImage.croppedImage
+            );
             const newGallery = await GalleryController.create({
                 galleryName,
                 galleryDescription,
@@ -192,13 +172,13 @@ router
 
                 res.status(201).send({ galleryId: newGallery.uuid });
             } else {
-                console.log(newGallery);
-                res.status(400).send({message: "Unabble to create gallery"});
+                debug(newGallery);
+                res.status(400).send({ message: "Unabble to create gallery" });
             }
             // res.send({message: "OK"});
         } catch (err) {
-            console.log(err);
-            res.status(400).send({message: "Bad Request"});
+            debug(err);
+            res.status(400).send({ message: "Bad Request" });
         }
     });
 
