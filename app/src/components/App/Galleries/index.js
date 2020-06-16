@@ -25,7 +25,7 @@ class Galleries extends Component {
     getGalleries() {
         fetch("/api/v1/galleries/all")
             .then(response => response.json())
-            .then(galleries => {
+            .then((galleries = []) => {
                 this.setState({ galleries });
             })
             .catch(console.error);
@@ -90,65 +90,66 @@ class Galleries extends Component {
     }
 
     render() {
-        const { galleries } = this.state;
+        const { galleries = [] } = this.state;
         return (
             <Container className="galleries">
                 <Row>
-                    {galleries.map(
-                        (
-                            {
-                                uuid,
-                                galleryName,
-                                galleryDescription,
-                                assetOrder,
-                                featuredImage,
-                                releaseDate: releaseDateString,
-                                Tags: tags,
-                                Assets: assets
-                            },
-                            i
-                        ) => {
-                            const galleryFirstAsset = _.find(
-                                assets,
-                                a => a.gfsId === featuredImage
-                            );
-                            return (
-                                <Col
-                                    xs={12}
-                                    md={6}
-                                    lg={4}
-                                    xl={3}
-                                    key={`gallery-col-${i}`}
-                                >
-                                    <NavLink
-                                        to={`/gallery/${uuid}`}
-                                        className="text-info"
+                    {galleries.length >= 1 &&
+                        galleries.map(
+                            (
+                                {
+                                    uuid,
+                                    galleryName,
+                                    galleryDescription,
+                                    assetOrder,
+                                    featuredImage,
+                                    releaseDate: releaseDateString,
+                                    Tags: tags,
+                                    Assets: assets
+                                },
+                                i
+                            ) => {
+                                const galleryFirstAsset = _.find(
+                                    assets,
+                                    a => a.gfsId === featuredImage
+                                );
+                                return (
+                                    <Col
+                                        xs={12}
+                                        md={6}
+                                        lg={4}
+                                        xl={3}
+                                        key={`gallery-col-${i}`}
                                     >
-                                        <Card className="border border-light">
-                                            <Card.Img
-                                                variant="top"
-                                                src={`/api/v1/image/${galleryFirstAsset.filename}`}
-                                            />
-                                            <Card.Header
-                                                as="h4"
-                                                className="gallery-card-header fit-this-text"
-                                            >
-                                                {galleryName}
-                                            </Card.Header>
-                                            <Card.Body>
-                                                <Card.Text>
-                                                    {galleryDescription}
-                                                </Card.Text>
-                                            </Card.Body>
-                                            <Card.Footer className="badges-cloud align-item-start justify-content-center">
-                                                <TagCloud tags={tags} />
-                                            </Card.Footer>
-                                        </Card>
-                                    </NavLink>
-                                </Col>
-                            );
-                        }
-                    )}
+                                        <NavLink
+                                            to={`/gallery/${uuid}`}
+                                            className="text-info"
+                                        >
+                                            <Card className="border border-light">
+                                                <Card.Img
+                                                    variant="top"
+                                                    src={`/api/v1/image/${galleryFirstAsset.filename}`}
+                                                />
+                                                <Card.Header
+                                                    as="h4"
+                                                    className="gallery-card-header fit-this-text"
+                                                >
+                                                    {galleryName}
+                                                </Card.Header>
+                                                <Card.Body>
+                                                    <Card.Text>
+                                                        {galleryDescription}
+                                                    </Card.Text>
+                                                </Card.Body>
+                                                <Card.Footer className="badges-cloud align-item-start justify-content-center">
+                                                    <TagCloud tags={tags} />
+                                                </Card.Footer>
+                                            </Card>
+                                        </NavLink>
+                                    </Col>
+                                );
+                            }
+                        )}
                 </Row>
             </Container>
         );

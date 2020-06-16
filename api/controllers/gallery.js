@@ -22,6 +22,7 @@ exports.create = gallery =>
 
 exports.findAll = () =>
     Gallery.findAll({
+        order: [["releaseDate", "DESC"]],
         include: [
             {
                 model: Tag,

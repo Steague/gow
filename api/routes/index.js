@@ -123,9 +123,10 @@ router
                 galleryName,
                 galleryDescription,
                 releaseDate,
-                tags,
+                tags: tagsJsonArray,
                 featuredImage: featuredImageJson
             } = req.body;
+            const tags = tagsJsonArray.map(tj => JSON.parse(tj));
             const featuredImage = JSON.parse(featuredImageJson);
             const { files } = req;
 
@@ -149,7 +150,7 @@ router
             });
             if (newGallery && newGallery.id) {
                 tags.forEach(async tag => {
-                    const newTag = await TagController.create({ tag });
+                    const newTag = await TagController.create(tag);
                     await TagController.addGallery(newTag.id, newGallery.id);
                 });
                 files.forEach(

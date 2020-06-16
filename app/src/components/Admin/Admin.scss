@@ -1,12 +1,7 @@
 .preview-gallery {
-    border-top: 1px solid white;
-    text-align: left;
-    margin-top: 10px;
-    padding-top: 10px;
-    > .container {
-        padding-left: 0;
-        padding-right: 0;
-    }
+    // border-top: 1px solid white;
+    padding-top: 0 !important;
+    height: calc(100% - 1.25rem) !important;
 }
 
 .drag-handle {
@@ -14,7 +9,7 @@
     top: 2px;
     left: 2px;
     opacity: 0.5;
-    transition: 1.3s !important;
+    transition: 0.3s !important;
     &:hover {
         opacity: 1;
     }
@@ -25,7 +20,7 @@
     top: 2px;
     left: 38px;
     opacity: 0.5;
-    transition: 1.3s !important;
+    transition: 0.3s !important;
     &:hover {
         opacity: 1;
     }

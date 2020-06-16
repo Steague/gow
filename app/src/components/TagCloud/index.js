@@ -10,41 +10,43 @@ class TagCloud extends Component {
         const { tags, removeable = false, handleRemove = () => {} } = this.props;
         return (
             <span>
-                {_.orderBy(tags, ["type", "tag"], ["desc", "asc"]).map(
-                    ({ tag, type }, i) => (
-                        <Badge
-                            pill
-                            key={`tag-${i}`}
-                            index={i}
-                            variant={type === "model" ? "primary" : "secondary"}
-                            className="border border-light"
-                        >
-                            <span>
-                                {removeable ? (
-                                    <span>
-                                        {tag} |{" "}
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Tooltip id={`tooltip-${i}`}>
-                                                    Remove &quot;{tag}&quot; tag.
-                                                </Tooltip>
-                                            }
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faTimesCircle}
-                                                style={{ cursor: "pointer" }}
-                                                onClick={e => handleRemove(i)}
-                                            />
-                                        </OverlayTrigger>
-                                    </span>
-                                ) : (
-                                    tag
-                                )}
-                            </span>
-                        </Badge>
-                    )
-                )}
+                {_.orderBy(
+                    tags,
+                    ["type", tag => tag.tag.toLowerCase()],
+                    ["desc", "asc"]
+                ).map(({ tag, type }, i) => (
+                    <Badge
+                        pill
+                        key={`tag-${i}`}
+                        index={i}
+                        variant={type === "model" ? "primary" : "secondary"}
+                        className="border border-light"
+                    >
+                        <span>
+                            {removeable ? (
+                                <span>
+                                    {tag} |{" "}
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip id={`tooltip-${i}`}>
+                                                Remove &quot;{tag}&quot; tag.
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faTimesCircle}
+                                            style={{ cursor: "pointer" }}
+                                            onClick={e => handleRemove(tag)}
+                                        />
+                                    </OverlayTrigger>
+                                </span>
+                            ) : (
+                                tag
+                            )}
+                        </span>
+                    </Badge>
+                ))}
             </span>
         );
     }
