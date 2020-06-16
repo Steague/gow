@@ -9,6 +9,8 @@ import PrivateRoute from "../PrivateRoute";
 import Navbar from "../Navbar";
 import config from "../../config/config.json";
 import { connect } from "react-redux";
+import CookieConsent from "react-cookie-consent";
+import { Button } from "react-bootstrap";
 
 import "./App.scss";
 
@@ -127,6 +129,27 @@ class App extends Component {
                         </Switch>
                     </div>
                 </div>
+                <CookieConsent
+                    location="bottom"
+                    buttonText="I Accept"
+                    cookieName="2020-06-16-Cookie-Accept"
+                    ButtonComponent={props => <Button {...props} />}
+                    disableButtonStyles={true}
+                    buttonStyle={{ margin: "2rem" }}
+                    buttonClasses="btn btn-success"
+                    expires={150}
+                >
+                    <h4>We value your privacy</h4>
+                    <h6>
+                        We and our partners use technologies, such as cookies, and process
+                        personal data, such as IP addresses and cookie identifiers, to
+                        personalise ads and content based on your interests, measure the
+                        performance of ads and content, and derive insights about the
+                        audiences who saw ads and content. Click the button on the right
+                        to consent to the use of this technology and the processing of
+                        your personal data for these purposes.
+                    </h6>
+                </CookieConsent>
             </Router>
         );
     }
