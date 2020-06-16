@@ -1,68 +1,53 @@
 import React, { Component } from "react";
 import { Badge, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { SortableElement, SortableContainer } from "react-sortable-hoc";
-import SortableHandle from "../SortableHandle";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; //
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import _ from "lodash";
 
 import { faTimesCircle } from "@fortawesome/pro-solid-svg-icons";
 
 class TagCloud extends Component {
-    constructor(props) {
-        super(props);
-
-        this.getWrapper = this.getWrapper.bind(this);
-    }
-
-    getWrapper() {
-        const { sortable } = this.props;
-        const htmlTag = props => <Badge {...props} />;
-        return sortable ? SortableElement(htmlTag) : htmlTag;
-    }
-
     render() {
         const { tags, removeable = false, handleRemove = () => {} } = this.props;
-        const TagWrapper = this.getWrapper();
         return (
             <span>
-                {tags.map((w, i) => (
-                    <TagWrapper
-                        pill
-                        key={`tag-${i}`}
-                        index={i}
-                        variant="primary"
-                        className="border border-light"
-                    >
-                        <span>
-                            {removeable ? (
-                                <span>
-                                    <SortableHandle>
-                                        <span>{w}</span>
-                                    </SortableHandle>{" "}
-                                    |{" "}
-                                    <OverlayTrigger
-                                        placement="top"
-                                        overlay={
-                                            <Tooltip id={`tooltip-${i}`}>
-                                                Remove &quot;{w}&quot; tag.
-                                            </Tooltip>
-                                        }
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faTimesCircle}
-                                            style={{ cursor: "pointer" }}
-                                            onClick={e => handleRemove(i)}
-                                        />
-                                    </OverlayTrigger>
-                                </span>
-                            ) : (
-                                w
-                            )}
-                        </span>
-                    </TagWrapper>
-                ))}
+                {_.orderBy(tags, ["type", "tag"], ["desc", "asc"]).map(
+                    ({ tag, type }, i) => (
+                        <Badge
+                            pill
+                            key={`tag-${i}`}
+                            index={i}
+                            variant={type === "model" ? "primary" : "secondary"}
+                            className="border border-light"
+                        >
+                            <span>
+                                {removeable ? (
+                                    <span>
+                                        {tag} |{" "}
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Tooltip id={`tooltip-${i}`}>
+                                                    Remove &quot;{tag}&quot; tag.
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={faTimesCircle}
+                                                style={{ cursor: "pointer" }}
+                                                onClick={e => handleRemove(i)}
+                                            />
+                                        </OverlayTrigger>
+                                    </span>
+                                ) : (
+                                    tag
+                                )}
+                            </span>
+                        </Badge>
+                    )
+                )}
             </span>
         );
     }
 }
 
-export default SortableContainer(TagCloud);
+export default TagCloud;

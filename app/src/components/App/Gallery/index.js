@@ -90,7 +90,7 @@ class Gallery extends Component {
                     <div id="gallery-tags-text" className="badges-cloud">
                         <span>
                             <FontAwesomeIcon icon={faTags} size="sm" />{" "}
-                            <TagCloud tags={tags.map(({ tag }) => tag)} />
+                            <TagCloud tags={tags} />
                         </span>
                     </div>
                 }

@@ -8,6 +8,7 @@ import {
     Row,
     Col,
     Button,
+    Form,
     InputGroup,
     FormControl,
     Navbar,
@@ -61,7 +62,8 @@ class AdGallery extends Component {
             },
             showCrop: false,
             croppedImage: null,
-            croppedImageCanvas: null
+            croppedImageCanvas: null,
+            tagType: "default"
         };
 
         this.getImage = this.getImage.bind(this);
@@ -236,7 +238,7 @@ class AdGallery extends Component {
                     console.error(e);
                 }
                 tags.forEach(tag => {
-                    data.append("tags[]", tag);
+                    data.append("tags[]", JSON.stringify(tag));
                 });
                 const myHeaders = new Headers({
                     Authorization: `Bearer ${token}`
@@ -796,15 +798,21 @@ class AdGallery extends Component {
                                                                 if (tagInput.length < 3) {
                                                                     return;
                                                                 }
+                                                                const {
+                                                                    tagType
+                                                                } = this.state;
                                                                 this.setState({
                                                                     tagInput: "",
                                                                     tags: [
                                                                         ...tags.filter(
-                                                                            t =>
-                                                                                t !==
+                                                                            ({ tag }) =>
+                                                                                tag !==
                                                                                 tagInput
                                                                         ),
-                                                                        tagInput
+                                                                        {
+                                                                            tag: tagInput,
+                                                                            type: tagType
+                                                                        }
                                                                     ]
                                                                 });
                                                                 break;
@@ -819,6 +827,35 @@ class AdGallery extends Component {
                                                     id="gallery-tags-input"
                                                 />
                                                 <InputGroup.Append>
+                                                    <InputGroup.Text>
+                                                        <Form.Check
+                                                            type="checkbox"
+                                                            id="check-api-checkbox"
+                                                            style={{
+                                                                display: "flex",
+                                                                alignItems: "center"
+                                                            }}
+                                                        >
+                                                            <Form.Check.Input
+                                                                type="checkbox"
+                                                                onChange={e => {
+                                                                    this.setState({
+                                                                        tagType:
+                                                                            e.target
+                                                                                .checked ===
+                                                                            true
+                                                                                ? "model"
+                                                                                : "default"
+                                                                    });
+                                                                }}
+                                                            />
+                                                            <Form.Check.Label>
+                                                                Model?
+                                                            </Form.Check.Label>
+                                                        </Form.Check>
+                                                    </InputGroup.Text>
+                                                </InputGroup.Append>
+                                                <InputGroup.Append>
                                                     <Button variant="success">
                                                         <FontAwesomeIcon
                                                             icon={faCheckCircle}
@@ -827,13 +864,13 @@ class AdGallery extends Component {
                                                     </Button>
                                                 </InputGroup.Append>
                                                 <FormControl.Feedback type="invalid">
-                                                    Please add{" "}
-                                                    {this.minTags - tags.length} more
-                                                    gallery tag
-                                                    {this.minTags - tags.length === 1
-                                                        ? ""
-                                                        : "s"}
-                                                    .
+                                                    {`Please add ${
+                                                        this.minTags - tags.length
+                                                    } more gallery tag ${
+                                                        this.minTags - tags.length === 1
+                                                            ? ""
+                                                            : "s"
+                                                    } .`}
                                                 </FormControl.Feedback>
                                                 <FormControl.Feedback type="valid">
                                                     <div className="align-left badges-cloud">
@@ -848,9 +885,6 @@ class AdGallery extends Component {
                                                                     )
                                                                 });
                                                             }}
-                                                            onSortEnd={this.onSortTagsEnd}
-                                                            useDragHandle
-                                                            sortable
                                                         />
                                                     </div>
                                                 </FormControl.Feedback>

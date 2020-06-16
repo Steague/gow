@@ -141,9 +141,7 @@ class Galleries extends Component {
                                                 </Card.Text>
                                             </Card.Body>
                                             <Card.Footer className="badges-cloud align-item-start justify-content-center">
-                                                <TagCloud
-                                                    tags={tags.map(({ tag }) => tag)}
-                                                />
+                                                <TagCloud tags={tags} />
                                             </Card.Footer>
                                         </Card>
                                     </NavLink>
