@@ -13,7 +13,9 @@ import {
     FormControl,
     Navbar,
     Nav,
-    Modal
+    Modal,
+    OverlayTrigger,
+    Tooltip
 } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { confirm } from "../../ConfirmDialog";
@@ -783,8 +785,27 @@ class AdGallery extends Component {
                                                             tagInput: e.target.value
                                                         });
                                                     }}
+                                                    onKeyUp={e => {
+                                                        switch (true) {
+                                                            case e.key === "Control": {
+                                                                this.setState({
+                                                                    tagType: "default"
+                                                                });
+                                                                break;
+                                                            }
+                                                            default: {
+                                                                //
+                                                            }
+                                                        }
+                                                    }}
                                                     onKeyDown={e => {
                                                         switch (true) {
+                                                            case e.key === "Control": {
+                                                                this.setState({
+                                                                    tagType: "model"
+                                                                });
+                                                                break;
+                                                            }
                                                             case e.key === "Tab":
                                                             case e.key === "Enter":
                                                             case e.key === ",": {
@@ -836,21 +857,40 @@ class AdGallery extends Component {
                                                                 alignItems: "center"
                                                             }}
                                                         >
-                                                            <Form.Check.Input
-                                                                type="checkbox"
-                                                                onChange={e => {
-                                                                    this.setState({
-                                                                        tagType:
-                                                                            e.target
-                                                                                .checked ===
-                                                                            true
-                                                                                ? "model"
-                                                                                : "default"
-                                                                    });
-                                                                }}
-                                                            />
+                                                            <OverlayTrigger
+                                                                placement="top"
+                                                                overlay={
+                                                                    <Tooltip>
+                                                                        Use
+                                                                        &quot;Ctrl&quot;
+                                                                        for interim
+                                                                        toggle.
+                                                                    </Tooltip>
+                                                                }
+                                                            >
+                                                                <Form.Check.Input
+                                                                    type="checkbox"
+                                                                    onChange={e => {
+                                                                        this.setState({
+                                                                            tagType:
+                                                                                e.target
+                                                                                    .checked ===
+                                                                                true
+                                                                                    ? "model"
+                                                                                    : "default"
+                                                                        });
+                                                                    }}
+                                                                    checked={
+                                                                        this.state
+                                                                            .tagType ===
+                                                                        "model"
+                                                                            ? true
+                                                                            : false
+                                                                    }
+                                                                />
+                                                            </OverlayTrigger>
                                                             <Form.Check.Label>
-                                                                Model?
+                                                                Model
                                                             </Form.Check.Label>
                                                         </Form.Check>
                                                     </InputGroup.Text>
