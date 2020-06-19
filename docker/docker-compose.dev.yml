@@ -61,9 +61,6 @@ services:
             - DB_HOST="db"
             - DB_PORT=5432
             - NODE_ENV=development
-        links:
-            - db:db
-            - gfs:gfs
         volumes:
             - ./../api:/usr/src/api
             - /usr/src/api/node_modules/
@@ -78,6 +75,8 @@ services:
             dockerfile: docker/db/Dockerfile.dev
         env_file: db/psql.dev.env
         image: gow:db
+        volumes:
+            - pgdata:/var/lib/postgresql/data
         ports:
             - "5431:5432"
     gfs:
@@ -91,3 +90,4 @@ services:
             - "27017-27019:27017-27019"
 volumes:
     mongodata:
+    pgdata:
