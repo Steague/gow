@@ -14,14 +14,10 @@ class Gallery extends Component {
         super(props);
 
         this.state = {
-            gallery: [],
-            currentImage: 0,
-            viewerIsOpen: false
+            gallery: []
         };
 
         this.getGallery = this.getGallery.bind(this);
-        this.openLightbox = this.openLightbox.bind(this);
-        this.closeLightbox = this.closeLightbox.bind(this);
     }
 
     componentDidMount() {
@@ -38,22 +34,8 @@ class Gallery extends Component {
             .catch(console.error);
     }
 
-    openLightbox(currentImage) {
-        this.setState({
-            currentImage,
-            viewerIsOpen: true
-        });
-    }
-
-    closeLightbox() {
-        this.setState({
-            currentImage: 0,
-            viewerIsOpen: false
-        });
-    }
-
     render() {
-        const { gallery, currentImage, viewerIsOpen } = this.state;
+        const { gallery } = this.state;
         const {
             galleryName,
             galleryDescription,
@@ -99,10 +81,6 @@ class Gallery extends Component {
                     width,
                     height
                 }))}
-                onOpenCarousel={this.openLightbox}
-                closeLightbox={this.closeLightbox}
-                viewerIsOpen={viewerIsOpen}
-                currentImage={currentImage}
             />
         );
     }

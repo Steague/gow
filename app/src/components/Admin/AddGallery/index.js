@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import _ from "lodash";
 import Dropzone from "react-dropzone";
 import arrayMove from "array-move";
-import CryptoJS from "crypto-js";
+import icf from "../../../lib/increment-file-hash";
 import {
     Container,
     Button,
@@ -20,9 +20,7 @@ import { confirm } from "../../ConfirmDialog";
 import TagCloud from "../../TagCloud";
 import Gallery from "../../Gallery";
 import ReactCrop from "react-image-crop";
-
 import InlineInputGroup from "../../InlineInputGroup";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faTrash,
@@ -45,8 +43,7 @@ class AdGallery extends Component {
 
         this.state = {
             photos: [],
-            currentImage: 0,
-            viewerIsOpen: false,
+            video: {},
             sortDirection: "Up",
             galleryName: "",
             galleryDescription: "",
@@ -70,8 +67,6 @@ class AdGallery extends Component {
         this.getVideo = this.getVideo.bind(this);
         this.getImage = this.getImage.bind(this);
         this.onDrop = this.onDrop.bind(this);
-        this.openLightbox = this.openLightbox.bind(this);
-        this.closeLightbox = this.closeLightbox.bind(this);
         this.onRemoveImage = this.onRemoveImage.bind(this);
         this.onSortEnd = this.onSortEnd.bind(this);
         this.onSortUp = this.onSortUp.bind(this);
@@ -82,9 +77,10 @@ class AdGallery extends Component {
         this.clientSideValidateNewGallery = this.clientSideValidateNewGallery.bind(this);
         this.onMakeFeaturedImage = this.onMakeFeaturedImage.bind(this);
         this.onCropComplete = this.onCropComplete.bind(this);
-        this.onCropChange = this.onCropChange.bind(this);
+        this.onCropChange = _.throttle(this.onCropChange.bind(this), 100);
 
         this.minTags = 3;
+        this.countUp = 0;
     }
 
     onCropComplete(crop, percentCrop) {
@@ -348,7 +344,17 @@ class AdGallery extends Component {
     }
 
     getVideo(file) {
-        return Promise.reject("Not ready to accepot video files yet.");
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve({
+                    type: "video",
+                    md5: await icf(file),
+                    file
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     getImage(file, boundBox = [640, 480]) {
@@ -361,7 +367,7 @@ class AdGallery extends Component {
                 const fr = new FileReader();
                 fr.onload = event => {
                     const img = new Image();
-                    img.onload = () => {
+                    img.onload = async () => {
                         const { width, height, src, ...rest } = img;
                         const scaleRatio =
                             Math.round(...boundBox) / Math.max(width, height);
@@ -369,7 +375,8 @@ class AdGallery extends Component {
                         canvas.height = height * scaleRatio;
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         resolve({
-                            md5: CryptoJS.MD5(src).toString(),
+                            type: "photo",
+                            md5: await icf(file),
                             width,
                             height,
                             originalWidth: width,
@@ -400,57 +407,72 @@ class AdGallery extends Component {
         Promise.all(pq)
             .then(res => {
                 const photos = [...this.state.photos];
-                res.forEach(p => {
-                    const { md5 } = p;
-                    // Make sure we dont already have the image
-                    if (_.findIndex(photos, { md5 }) === -1) {
-                        const {
-                            width,
-                            height,
-                            originalWidth,
-                            originalHeight,
-                            scaleRatio,
-                            src,
-                            canvas,
-                            file
-                        } = p;
-                        photos.push({
-                            src,
-                            canvas,
-                            width,
-                            height,
-                            originalWidth,
-                            originalHeight,
-                            scaleRatio,
-                            file,
-                            md5
-                        });
+                let video = { ...this.state.video };
+                res.forEach(a => {
+                    const { md5, type } = a;
+                    switch (true) {
+                        case type === "video": {
+                            video = a;
+                            console.log({ video });
+                            break;
+                        }
+                        default: {
+                            // Make sure we dont already have the image
+                            if (_.findIndex(photos, { md5 }) === -1) {
+                                const {
+                                    width,
+                                    height,
+                                    originalWidth,
+                                    originalHeight,
+                                    scaleRatio,
+                                    src,
+                                    canvas,
+                                    file
+                                } = a;
+                                photos.push({
+                                    src,
+                                    canvas,
+                                    width,
+                                    height,
+                                    originalWidth,
+                                    originalHeight,
+                                    scaleRatio,
+                                    file,
+                                    md5
+                                });
+                            }
+                        }
                     }
                 });
                 this.setState(
                     {
+                        video,
                         photos,
                         loadingGallery: false,
                         galleryName: this.state.galleryName
                             ? this.state.galleryName
                             : photos[0] && photos[0].file && photos[0].file.name
                             ? _.startCase(photos[0].file.name.replace(/\.[^/.]+$/, ""))
+                            : video && video.file && video.file.name
+                            ? _.startCase(video.file.name.replace(/\.[^/.]+$/, ""))
                             : ""
                     },
                     () => {
-                        const photo = photos[0];
-                        const max = Math.max(photo.width, photo.height);
-                        const [width, height] = [
-                            (photo.height / max) * 100,
-                            (photo.width / max) * 100
-                        ];
-                        this.makeClientCrop({
-                            width,
-                            height,
-                            x: 0,
-                            y: 0,
-                            aspect: 1
-                        });
+                        if (photos[0]) {
+                            const photo = photos[0];
+                            const max = Math.max(photo.width, photo.height);
+                            const [width, height] = [
+                                (photo.height / max) * 100,
+                                (photo.width / max) * 100
+                            ];
+                            this.makeClientCrop({
+                                width,
+                                height,
+                                x: 0,
+                                y: 0,
+                                aspect: 1
+                            });
+                        }
                     }
                 );
             })
@@ -479,8 +501,7 @@ class AdGallery extends Component {
     render() {
         const {
             photos,
-            currentImage,
-            viewerIsOpen,
+            video,
             sortDirection,
             galleryName,
             galleryDescription,
@@ -628,7 +649,7 @@ class AdGallery extends Component {
                             inputId="gallery-name-input"
                             text={
                                 <h4 id="gallery-name-text">
-                                    {galleryName || "Gallery Title"}
+                                    {galleryName || "Click to add a Gallery Title"}
                                 </h4>
                             }
                             input={({ onConfirm }) => (
@@ -671,7 +692,7 @@ class AdGallery extends Component {
                             inputId="gallery-description-input"
                             text={
                                 <span id="gallery-description-text">
-                                    {galleryDescription || "No description currently."}
+                                    {galleryDescription || "Click to add a description."}
                                 </span>
                             }
                             input={({ onConfirm }) => (
@@ -751,7 +772,7 @@ class AdGallery extends Component {
                     }
                     tags={
                         <InlineInputGroup
-                            tooltipPlacement="right"
+                            tooltipPlacement="left"
                             textId="gallery-tags-text"
                             inputId="gallery-tags-input"
                             text={
@@ -911,13 +932,10 @@ class AdGallery extends Component {
                         />
                     }
                     photos={photos}
-                    onOpenCarousel={this.openLightbox}
-                    closeLightbox={this.closeLightbox}
+                    video={video}
                     onRemoveImage={this.onRemoveImage}
                     onMakeFeaturedImage={this.onMakeFeaturedImage}
                     onSortEnd={this.onSortEnd}
-                    viewerIsOpen={viewerIsOpen}
-                    currentImage={currentImage}
                 />
                 <Modal show={showCrop} backdrop="static" keyboard={false}>
                     <Modal.Header>

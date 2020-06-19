@@ -124,6 +124,10 @@ class App extends Component {
                             >
                                 <Admin token={token} />
                             </PrivateRoute>
+                            <Route
+                                path="/gallery/:id/:tab"
+                                render={props => <Gallery />}
+                            />
                             <Route path="/gallery/:id" render={props => <Gallery />} />
                             <Route path="/" render={props => <Galleries />} />
                         </Switch>
@@ -132,12 +136,13 @@ class App extends Component {
                 <CookieConsent
                     location="bottom"
                     buttonText="I Accept"
-                    cookieName="2020-06-16-Cookie-Accept"
+                    cookieName="Consent-2020-06-18-Cookie-Accept"
                     ButtonComponent={props => <Button {...props} />}
                     disableButtonStyles={true}
                     buttonStyle={{ margin: "2rem" }}
                     buttonClasses="btn btn-success"
                     expires={150}
+                    overlay={true}
                 >
                     <h4>We value your privacy</h4>
                     <h6>

@@ -1,95 +1,106 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-import ReactLoading from "react-loading";
-import Carousel, { Modal, ModalGateway } from "react-images";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEyeSlash } from "@fortawesome/pro-solid-svg-icons";
 import Gallery from "react-photo-gallery";
 import SortableGallery from "./SortableGallery";
 import Photo from "./Photo";
-import { Scrollbars } from "react-custom-scrollbars";
+import Player from "./Player";
+import TypeTabs from "./TypeTabs";
+import Lightbox from "./Lightbox";
 
-class GowGallery extends Component {
-    getGalleryState() {
-        const {
-            loading = true,
-            sortable = false,
-            photos = [],
-            axis = "xy",
-            useDragHandle = false,
-            onOpenCarousel = () => {},
-            onRemoveImage = () => {},
-            onMakeFeaturedImage = () => {},
-            onSortEnd = () => {}
-        } = this.props;
+class GowGallery extends PureComponent {
+    constructor(props) {
+        super(props);
 
-        switch (true) {
-            case loading === true: {
-                return (
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center"
-                        }}
-                    >
-                        <ReactLoading
-                            type={"cylon"}
-                            color={"#FFFFFF"}
-                            height={"20%"}
-                            width={"20%"}
-                        />
-                    </div>
-                );
-            }
-            case photos.length > 0 && sortable: {
-                return (
-                    <SortableGallery
-                        photos={photos}
-                        useDragHandle={useDragHandle}
-                        onOpenCarousel={onOpenCarousel}
-                        onRemoveImage={onRemoveImage}
-                        onMakeFeaturedImage={onMakeFeaturedImage}
-                        onSortEnd={onSortEnd}
-                        axis={axis}
-                        targetRowHeight={containerWidth => containerWidth / 2}
-                    />
-                );
-            }
-            case photos.length > 0 && !sortable: {
-                return (
-                    <Gallery
-                        photos={photos}
-                        renderImage={props => (
-                            <Photo
-                                {...props}
-                                pIndex={props.index}
-                                onOpenCarousel={onOpenCarousel}
-                                onRemoveImage={onRemoveImage}
-                                onMakeFeaturedImage={onMakeFeaturedImage}
-                            />
-                        )}
-                        axis={axis}
-                        targetRowHeight={containerWidth => containerWidth / 2}
-                    />
-                );
-            }
-            default: {
-                return (
-                    <div
-                        style={{
-                            fontSize: "40px",
-                            textAlign: "center",
-                            margin: "50px 0"
-                        }}
-                    >
-                        <span>
-                            <FontAwesomeIcon icon={faEyeSlash} /> Empty Gallery
-                        </span>
-                    </div>
-                );
-            }
-        }
+        this.state = {
+            currentImage: 0,
+            viewerIsOpen: false,
+            tab:
+                this.props.match &&
+                this.props.match.params &&
+                this.props.match.params.type
+                    ? this.props.match.params.type
+                    : props.video && props.video.type
+                    ? "video"
+                    : props.photos.length > 0
+                    ? "photos"
+                    : "empty"
+        };
+
+        this.openLightbox = this.openLightbox.bind(this);
+        this.closeLightbox = this.closeLightbox.bind(this);
+    }
+
+    // TODO: Figure out why the gallery flickers when setting feature image crop
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     const updateBool1 = !_.isEqual(this.props.galleryName, nextProps.galleryName);
+    //     const updateBool2 = !_.isEqual(
+    //         this.props.galleryDescription,
+    //         nextProps.galleryDescription
+    //     );
+    //     const updateBool3 = !_.isEqual(this.props.releaseDate, nextProps.releaseDate);
+    //     const updateBool4 = !_.isEqual(this.props.tags, nextProps.tags);
+    //     const updateBool5 = !_.isEqual(this.props.photos, nextProps.photos);
+    //     const updateBool6 = !_.isEqual(this.props.video, nextProps.video);
+    //     const updateBool7 = !_.isEqual(this.props.axis, nextProps.axis);
+    //     const updateBool8 = !_.isEqual(this.props.useDragHandle, nextProps.useDragHandle);
+    //     const updateBool9 = !_.isEqual(this.props.onRemoveImage, nextProps.onRemoveImage);
+    //     const updateBool10 = !_.isEqual(
+    //         this.props.onMakeFeaturedImage,
+    //         nextProps.onMakeFeaturedImage
+    //     );
+    //     const updateBool11 = !_.isEqual(this.props.onSortEnd, nextProps.onSortEnd);
+    //     const updateBool12 = !_.isEqual(this.props.loading, nextProps.loading);
+    //     const updateBool13 = !_.isEqual(this.props.sortable, nextProps.tags);
+    //     const updateBool14 = !_.isEqual(this.props.className, nextProps.className);
+    //     console.log({
+    //         updateBool1,
+    //         updateBool2,
+    //         updateBool3,
+    //         updateBool4,
+    //         updateBool5,
+    //         updateBool6,
+    //         updateBool7,
+    //         updateBool8,
+    //         updateBool9,
+    //         updateBool10,
+    //         updateBool11,
+    //         updateBool12,
+    //         updateBool13,
+    //         updateBool14
+    //     });
+    //     if (updateBool1) {
+    //         console.log("GN", this.props.galleryName, nextProps.galleryName);
+    //     }
+    //     return (
+    //         updateBool1 ||
+    //         updateBool2 ||
+    //         updateBool3 ||
+    //         updateBool4 ||
+    //         updateBool5 ||
+    //         updateBool6 ||
+    //         updateBool7 ||
+    //         updateBool8 ||
+    //         updateBool9 ||
+    //         updateBool10 ||
+    //         updateBool11 ||
+    //         updateBool12 ||
+    //         updateBool13 ||
+    //         updateBool14
+    //     );
+    // }
+
+    openLightbox(currentImage) {
+        this.setState({
+            currentImage,
+            viewerIsOpen: true
+        });
+    }
+
+    closeLightbox() {
+        this.setState({
+            currentImage: 0,
+            viewerIsOpen: false
+        });
     }
 
     render() {
@@ -99,11 +110,55 @@ class GowGallery extends Component {
             releaseDate,
             tags,
             photos = [],
-            viewerIsOpen,
-            currentImage,
-            closeLightbox,
-            className
+            video = {},
+            axis = "xy",
+            useDragHandle = false,
+            onRemoveImage = () => {},
+            onMakeFeaturedImage = () => {},
+            onSortEnd = () => {},
+            loading = true,
+            sortable = false,
+            className = ""
         } = this.props;
+
+        const { viewerIsOpen, currentImage } = this.state;
+
+        const videoTab =
+            video.type && video.type === "video"
+                ? props => <Player url={URL.createObjectURL(video.file)} />
+                : null;
+        const photosTab =
+            photos.length > 0
+                ? sortable
+                    ? props => (
+                          <SortableGallery
+                              photos={photos}
+                              useDragHandle={useDragHandle}
+                              onOpenCarousel={this.openLightbox}
+                              onRemoveImage={onRemoveImage}
+                              onMakeFeaturedImage={onMakeFeaturedImage}
+                              onSortEnd={onSortEnd}
+                              axis={axis}
+                              targetRowHeight={containerWidth => containerWidth / 2}
+                          />
+                      )
+                    : props => (
+                          <Gallery
+                              photos={photos}
+                              renderImage={props => (
+                                  <Photo
+                                      {...props}
+                                      pIndex={props.index}
+                                      onOpenCarousel={this.openLightbox}
+                                      onRemoveImage={onRemoveImage}
+                                      onMakeFeaturedImage={onMakeFeaturedImage}
+                                  />
+                              )}
+                              axis={axis}
+                              targetRowHeight={containerWidth => containerWidth / 2}
+                          />
+                      )
+                : null;
 
         return (
             <Container className={className}>
@@ -117,53 +172,25 @@ class GowGallery extends Component {
                         </Row>
                     </Card.Header>
                     <Card.Body>
-                        <div className="card-text">{galleryDescription}</div>
-                        <Scrollbars
-                            className="gallery-images"
-                            style={{
-                                width: "calc(100% + 2.5rem)",
-                                height: "calc(100% + 1.2rem)"
-                            }}
-                            renderTrackHorizontal={props => (
-                                <div {...props} className="track-horizontal" />
-                            )}
-                            renderTrackVertical={props => (
-                                <div {...props} className="track-vertical" />
-                            )}
-                            renderThumbHorizontal={props => (
-                                <div
-                                    {...props}
-                                    className="thumb-horizontal border border-light bg-dark"
-                                />
-                            )}
-                            renderThumbVertical={props => (
-                                <div
-                                    {...props}
-                                    className="thumb-vertical border border-light bg-dark"
-                                />
-                            )}
-                        >
-                            {this.getGalleryState()}
-                        </Scrollbars>
+                        <Card.Text as="div" style={{ marginBottom: "1rem" }}>
+                            {galleryDescription}
+                        </Card.Text>
+                        <TypeTabs
+                            loading={loading}
+                            videoTab={videoTab}
+                            photosTab={photosTab}
+                        />
                     </Card.Body>
                     <Card.Footer xs={3} className="badges-cloud text-right">
                         {tags}
                     </Card.Footer>
                 </Card>
-                <ModalGateway>
-                    {viewerIsOpen ? (
-                        <Modal onClose={closeLightbox}>
-                            <Carousel
-                                currentIndex={currentImage}
-                                views={photos.map(x => ({
-                                    ...x,
-                                    srcset: x.srcSet,
-                                    caption: x.title
-                                }))}
-                            />
-                        </Modal>
-                    ) : null}
-                </ModalGateway>
+                <Lightbox
+                    viewerIsOpen={viewerIsOpen}
+                    closeLightbox={this.closeLightbox}
+                    currentImage={currentImage}
+                    photos={photos}
+                />
             </Container>
         );
     }
