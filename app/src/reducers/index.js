@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
 import theme from "./theme";
-// import visibilityFilter from './visibilityFilter';
+import notifications from "./notifications";
 
 export default combineReducers({
-    theme
-    // visibilityFilter
+    theme,
+    notifications
 });
