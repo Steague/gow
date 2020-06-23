@@ -126,10 +126,12 @@ class Galleries extends Component {
                                             className="text-info"
                                         >
                                             <Card className="border border-light">
-                                                <Card.Img
-                                                    variant="top"
-                                                    src={`/api/v1/image/${galleryFirstAsset.filename}`}
-                                                />
+                                                <div className="img-hover-zoom">
+                                                    <Card.Img
+                                                        variant="top"
+                                                        src={`/api/v1/image/${galleryFirstAsset.filename}`}
+                                                    />
+                                                </div>
                                                 <Card.Header
                                                     as="h4"
                                                     className="gallery-card-header fit-this-text"
