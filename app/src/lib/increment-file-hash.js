@@ -1,6 +1,6 @@
 import SparkMD5 from "spark-md5";
 
-const incrementFileHash = file => {
+const incrementFileHash = (file, cb = () => {}, batch) => {
     return new Promise((resolve, reject) => {
         try {
             var blobSlice =
@@ -14,14 +14,21 @@ const incrementFileHash = file => {
                 fileReader = new FileReader();
 
             fileReader.onload = function (e) {
-                console.log("read chunk nr", currentChunk + 1, "of", chunks);
+                // console.log("read chunk nr", currentChunk + 1, "of", chunks);
                 spark.append(e.target.result); // Append array buffer
                 currentChunk++;
 
                 if (currentChunk < chunks) {
                     loadNext();
+                    cb.call(null, currentChunk / chunks, { type: "part", file, batch });
                 } else {
-                    console.log("finished loading");
+                    // console.log("finished loading");
+                    batch.processedFiles++;
+                    cb.call(null, currentChunk / chunks, {
+                        type: "complete",
+                        file,
+                        batch
+                    });
                     resolve(spark.end()); // Compute hash
                 }
             };

@@ -7,6 +7,7 @@ import Galleries from "./Galleries";
 import Gallery from "./Gallery";
 import PrivateRoute from "../PrivateRoute";
 import Navbar from "../Navbar";
+import Notifications from "../Notifications";
 import config from "../../config/config.json";
 import { connect } from "react-redux";
 import CookieConsent from "react-cookie-consent";
@@ -137,6 +138,7 @@ class App extends Component {
                             <Route path="/" render={props => <Galleries />} />
                         </Switch>
                     </div>
+                    <Notifications />
                 </div>
                 <CookieConsent
                     location="bottom"

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import _ from "lodash";
 import Dropzone from "react-dropzone";
 import arrayMove from "array-move";
-import icf from "../../../lib/increment-file-hash";
+import ifh from "../../../lib/increment-file-hash";
 import {
     Container,
     Button,
@@ -13,7 +13,8 @@ import {
     Nav,
     Modal,
     OverlayTrigger,
-    Tooltip
+    Tooltip,
+    ProgressBar
 } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { confirm } from "../../ConfirmDialog";
@@ -33,6 +34,8 @@ import {
     faCheckCircle,
     faSparkles
 } from "@fortawesome/pro-solid-svg-icons";
+import { connect } from "react-redux";
+import { addNotification, updateNotification, hideNotification } from "../../../actions";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-image-crop/lib/ReactCrop.scss";
@@ -324,14 +327,14 @@ class AdGallery extends Component {
         });
     }
 
-    getAsset(file) {
+    getAsset(file, assetsBatch) {
         if (!file instanceof File)
             return Promise.reject(
                 "Specified file is not an instance of the File object."
             );
         switch (true) {
             case file.type.startsWith("image/"): {
-                return this.getImage(file);
+                return this.getImage(file, assetsBatch);
             }
             case file.type.startsWith("video/"): {
                 return this.getVideo(file);
@@ -348,7 +351,7 @@ class AdGallery extends Component {
             try {
                 resolve({
                     type: "video",
-                    md5: await icf(file),
+                    md5: await ifh(file),
                     file
                 });
             } catch (e) {
@@ -357,7 +360,7 @@ class AdGallery extends Component {
         });
     }
 
-    getImage(file, boundBox = [640, 480]) {
+    getImage(file, assetsBatch, boundBox = [640, 480]) {
         if (!boundBox || boundBox.length !== 2)
             return Promise.reject("Specified BBox is not valid.");
         return new Promise((resolve, reject) => {
@@ -376,7 +379,49 @@ class AdGallery extends Component {
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         resolve({
                             type: "photo",
-                            md5: await icf(file),
+                            md5: await ifh(
+                                file,
+                                (percentage, batchObj) => {
+                                    const {
+                                        id,
+                                        processedPercent,
+                                        processedFiles,
+                                        assetsCount
+                                    } = batchObj.batch;
+                                    const percentComplete = processedFiles / assetsCount;
+                                    if (percentComplete > processedPercent) {
+                                        batchObj.processedPercent = percentComplete;
+
+                                        const {
+                                            updateNotification,
+                                            hideNotification
+                                        } = this.props;
+                                        const now = (percentComplete * 100).toFixed(2);
+                                        updateNotification({
+                                            id,
+                                            header: "Adding Gallery Assets",
+                                            body: (
+                                                <span>
+                                                    Progress{" "}
+                                                    {`(${processedFiles}/${assetsCount})`}
+                                                    :{" "}
+                                                    <ProgressBar
+                                                        striped
+                                                        variant="info"
+                                                        now={now}
+                                                        label={`${now}%`}
+                                                    />
+                                                </span>
+                                            )
+                                        });
+
+                                        if (now === "100.00") {
+                                            setTimeout(() => hideNotification(id), 3000);
+                                        }
+                                    }
+                                },
+                                assetsBatch
+                            ),
                             width,
                             height,
                             originalWidth: width,
@@ -401,8 +446,14 @@ class AdGallery extends Component {
     onDrop(assets) {
         this.setState({ loadingGallery: true });
         const pq = [];
+        const assetsBatch = {
+            id: Date.now(),
+            processedPercent: 0,
+            processedFiles: 0,
+            assetsCount: assets.length
+        };
         assets.forEach(a => {
-            pq.push(this.getAsset(a));
+            pq.push(this.getAsset(a, assetsBatch));
         });
         Promise.all(pq)
             .then(res => {
@@ -497,6 +548,27 @@ class AdGallery extends Component {
             }
         }
     }
+
+    // componentDidMount() {
+    //     const { addNotification, updateNotification } = this.props;
+    //
+    //     addNotification({
+    //         id: "test",
+    //         header: "hello world",
+    //         body: "this is just a test"
+    //     });
+    //     addNotification({
+    //         id: "test 2",
+    //         header: "hello world 2",
+    //         body: "this is just another test"
+    //     });
+    //     setTimeout(() => {
+    //         updateNotification({
+    //             id: "test 2",
+    //             body: "this is an updated notification"
+    //         });
+    //     }, 3000);
+    // }
 
     render() {
         const {
@@ -966,4 +1038,12 @@ class AdGallery extends Component {
     }
 }
 
-export default AdGallery;
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => ({
+    addNotification: notification => dispatch(addNotification(notification)),
+    updateNotification: notification => dispatch(updateNotification(notification)),
+    hideNotification: id => dispatch(hideNotification(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AdGallery);
