@@ -32,7 +32,10 @@ class Photo extends Component {
         }
         // photo.src = photo.canvas.toDataURL(photo.file.type);
         return (
-            <div style={onOpenCarousel ? { ...imgStyle, ...imgWithClick } : imgStyle}>
+            <div
+                style={onOpenCarousel ? { ...imgStyle, ...imgWithClick } : imgStyle}
+                className="img-hover-zoom"
+            >
                 <img
                     alt={name}
                     src={src}

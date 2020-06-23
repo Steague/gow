@@ -7,6 +7,8 @@ import Player from "./Player";
 import TypeTabs from "./TypeTabs";
 import Lightbox from "./Lightbox";
 
+import "./Gallery.scss";
+
 class GowGallery extends PureComponent {
     constructor(props) {
         super(props);
