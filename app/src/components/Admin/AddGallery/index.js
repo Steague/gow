@@ -648,7 +648,7 @@ class AdGallery extends Component {
                             textId="gallery-name-text"
                             inputId="gallery-name-input"
                             text={
-                                <h4 id="gallery-name-text">
+                                <h4 id="gallery-name-text" className="mb-0">
                                     {galleryName || "Click to add a Gallery Title"}
                                 </h4>
                             }
@@ -737,7 +737,7 @@ class AdGallery extends Component {
                             text={
                                 <span id="gallery-release-date-text">
                                     {releaseDate instanceof Date ? (
-                                        <h4>
+                                        <h4 className="mb-0">
                                             <FontAwesomeIcon icon={faCalendar} />{" "}
                                             {releaseDate.toLocaleDateString("en-US")}
                                         </h4>

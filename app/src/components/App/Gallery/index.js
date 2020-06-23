@@ -54,14 +54,18 @@ class Gallery extends Component {
             <Gal
                 className="gallery text-left"
                 loading={false}
-                galleryName={<h4 id="gallery-name-text">{galleryName}</h4>}
+                galleryName={
+                    <h4 id="gallery-name-text" className="mb-0">
+                        {galleryName}
+                    </h4>
+                }
                 galleryDescription={
                     <span id="gallery-description-text">{galleryDescription}</span>
                 }
                 releaseDate={
                     <span id="gallery-release-date-text">
                         {releaseDate instanceof Date ? (
-                            <h4>
+                            <h4 className="mb-0">
                                 <FontAwesomeIcon icon={faCalendar} />{" "}
                                 {releaseDate.toLocaleDateString("en-US")}
                             </h4>
