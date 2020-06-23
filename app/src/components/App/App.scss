@@ -15,11 +15,17 @@ code {
 img.react-images__view-image {
     max-height: 100vh;
 }
-.align-left {
-    text-align: left;
-}
-.align-right {
-    text-align: right;
+
+#outer-container {
+    height: 100%;
+
+    .left {
+        > div {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
 }
 
 #page-wrap {

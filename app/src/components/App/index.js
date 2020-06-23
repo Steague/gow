@@ -108,14 +108,19 @@ class App extends Component {
         return (
             <Router>
                 <div id="outer-container">
-                    <Menu
-                        googleLoginStateButton={this.getGoogleLoginStateButton()}
-                        isAuthenticated={isAuthenticated}
-                    />
-
-                    <Navbar isAuthenticated={isAuthenticated} authPending={authPending} />
+                    <div className="left">
+                        <Menu
+                            googleLoginStateButton={this.getGoogleLoginStateButton()}
+                            isAuthenticated={isAuthenticated}
+                        />
+                    </div>
 
                     <div id="page-wrap">
+                        <Navbar
+                            isAuthenticated={isAuthenticated}
+                            authPending={authPending}
+                        />
+
                         <Switch>
                             <PrivateRoute
                                 path="/admin"
