@@ -84,7 +84,6 @@ class Galleries extends Component {
                     tries <= 30
                 ) {
                     tries++;
-                    console.log(overflowing(), stagger);
                     CHILDREN.forEach(child => {
                         if (
                             wideable ||
