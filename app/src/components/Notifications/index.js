@@ -6,7 +6,6 @@ import { removeNotification, hideNotification } from "../../actions";
 class Notifications extends Component {
     render() {
         const { notifications, hideNotification } = this.props;
-        console.log("notifications", notifications);
         return (
             <div
                 style={{

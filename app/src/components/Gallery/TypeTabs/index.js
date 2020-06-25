@@ -1,38 +1,30 @@
 import React, { Component } from "react";
 import { Nav } from "react-bootstrap";
-import Empty from "../Empty";
-import Loading from "../Loading";
-import ScrollableViewport from "../../ScrollableViewport";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPortrait, faVideo } from "@fortawesome/pro-solid-svg-icons";
-import _ from "lodash";
 
 class TypeTabs extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            tab: null
-        };
 
         this.getAvailableTabs = this.getAvailableTabs.bind(this);
         this.setUnsetTabs = this.setUnsetTab.bind(this);
     }
 
     getAvailableTabs() {
-        const { videoTab, photosTab } = this.props;
+        const { video, photos } = this.props;
         const availableTabs = {};
-        if (typeof videoTab === "function") {
+        if (video && video.type === "video") {
             availableTabs["video"] = true;
         }
-        if (typeof photosTab === "function") {
+        if (photos && photos.length > 0) {
             availableTabs["photos"] = true;
         }
         return availableTabs;
     }
 
     setUnsetTab() {
-        const { tab } = this.state;
+        const { tab } = this.props;
         if (tab) return;
 
         const availableTabs = this.getAvailableTabs();
@@ -50,9 +42,9 @@ class TypeTabs extends Component {
     }
 
     render() {
-        const { loading = false, videoTab: VideoTab, photosTab: PhotosTab } = this.props;
-        const { tab } = this.state;
+        const { tab, onSetTab = () => {} } = this.props;
         const availableTabs = this.getAvailableTabs();
+        console.log({ availableTabs, tab });
         return (
             <React.Fragment>
                 {availableTabs["video"] && availableTabs["photos"] && (
@@ -60,7 +52,8 @@ class TypeTabs extends Component {
                         justify
                         variant="tabs"
                         activeKey={tab}
-                        onSelect={tab => this.setState({ tab })}
+                        onSelect={onSetTab}
+                        className="mb-1"
                     >
                         <Nav.Item>
                             <Nav.Link eventKey="video">
@@ -76,28 +69,7 @@ class TypeTabs extends Component {
                         </Nav.Item>
                     </Nav>
                 )}
-                {loading === true && <Loading />}
-                {loading === false &&
-                    ((tab === "video" && availableTabs["video"]) ||
-                        (availableTabs["video"] && !availableTabs["photos"])) && (
-                        <div className="gallery-images">
-                            <VideoTab />
-                        </div>
-                    )}
-                {loading === false &&
-                    ((tab === "photos" && availableTabs["photos"]) ||
-                        (availableTabs["photos"] && !availableTabs["video"])) && (
-                        <ScrollableViewport
-                            className="gallery-images"
-                            style={{
-                                width: "calc(100% + 2.5rem)",
-                                height: "calc(100% + 1.2rem)"
-                            }}
-                        >
-                            <PhotosTab />
-                        </ScrollableViewport>
-                    )}
-                {loading === false && _.keys(availableTabs).length === 0 && <Empty />}
+                {this.props.children}
             </React.Fragment>
         );
     }

@@ -3,25 +3,10 @@ import _ from "lodash";
 import Dropzone from "react-dropzone";
 import arrayMove from "array-move";
 import ifh from "../../../lib/increment-file-hash";
-import {
-    Container,
-    Button,
-    Form,
-    InputGroup,
-    FormControl,
-    Navbar,
-    Nav,
-    Modal,
-    OverlayTrigger,
-    Tooltip,
-    ProgressBar
-} from "react-bootstrap";
-import DatePicker from "react-datepicker";
+import { Container, Button, Navbar, Nav, Modal, ProgressBar } from "react-bootstrap";
 import { confirm } from "../../ConfirmDialog";
-import TagCloud from "../../TagCloud";
 import Gallery from "../../Gallery";
 import ReactCrop from "react-image-crop";
-import InlineInputGroup from "../../InlineInputGroup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faTrash,
@@ -29,8 +14,6 @@ import {
     faSortCircleUp,
     faSortCircleDown,
     faCloudUpload,
-    faCalendar,
-    faTags,
     faCheckCircle,
     faSparkles
 } from "@fortawesome/pro-solid-svg-icons";
@@ -44,7 +27,7 @@ class AdGallery extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
+        this.defaultState = {
             photos: [],
             video: {},
             sortDirection: "Up",
@@ -66,6 +49,8 @@ class AdGallery extends Component {
             tagType: "default"
         };
 
+        this.state = this.defaultState;
+
         this.getAsset = this.getAsset.bind(this);
         this.getVideo = this.getVideo.bind(this);
         this.getImage = this.getImage.bind(this);
@@ -81,6 +66,7 @@ class AdGallery extends Component {
         this.onMakeFeaturedImage = this.onMakeFeaturedImage.bind(this);
         this.onCropComplete = this.onCropComplete.bind(this);
         this.onCropChange = _.throttle(this.onCropChange.bind(this), 100);
+        this.onSetGalleryState = this.onSetGalleryState.bind(this);
 
         this.minTags = 3;
         this.countUp = 0;
@@ -254,9 +240,16 @@ class AdGallery extends Component {
                     .then(
                         response => response.json() // if the response is a JSON object
                     )
-                    .then(
-                        success => console.log(success) // Handle the success response object
-                    )
+                    .then(async success => {
+                        if (
+                            await confirm("Gallery added successfully!", "OK", null, {
+                                title: "Gallery Added",
+                                proceedVariant: "success"
+                            })
+                        ) {
+                            this.setState({ ...this.defaultState });
+                        }
+                    })
                     .catch(console.error);
             };
             upload();
@@ -275,12 +268,7 @@ class AdGallery extends Component {
                 proceedVariant: "danger"
             })
         ) {
-            this.setState({
-                photos: [],
-                currentImage: 0,
-                viewerIsOpen: false,
-                sortDirection: "Up"
-            });
+            this.setState(this.defaultState);
         }
     }
 
@@ -337,7 +325,7 @@ class AdGallery extends Component {
                 return this.getImage(file, assetsBatch);
             }
             case file.type.startsWith("video/"): {
-                return this.getVideo(file);
+                return this.getVideo(file, assetsBatch);
             }
             default: {
                 console.log("file type", file.type);
@@ -346,12 +334,71 @@ class AdGallery extends Component {
         }
     }
 
-    getVideo(file) {
+    getVideo(file, assetsBatch) {
         return new Promise(async (resolve, reject) => {
             try {
                 resolve({
                     type: "video",
-                    md5: await ifh(file),
+                    md5: await ifh(
+                        file,
+                        (percentage, batchObj) => {
+                            const { type, file } = batchObj;
+                            const {
+                                id,
+                                processedPercent,
+                                processedFiles,
+                                assetsCount
+                            } = batchObj.batch;
+                            const { updateNotification, hideNotification } = this.props;
+                            if (type === "complete") {
+                                const percentComplete = processedFiles / assetsCount;
+                                if (percentComplete > processedPercent) {
+                                    batchObj.processedPercent = percentComplete;
+
+                                    const now = (percentComplete * 100).toFixed(2);
+                                    updateNotification({
+                                        id,
+                                        header: "Adding Gallery Assets",
+                                        body: (
+                                            <span>
+                                                Progress{" "}
+                                                {`(${processedFiles}/${assetsCount})`}:{" "}
+                                                <ProgressBar
+                                                    striped
+                                                    variant="info"
+                                                    now={now}
+                                                    label={`${now}%`}
+                                                />
+                                            </span>
+                                        )
+                                    });
+
+                                    if (now === "100.00") {
+                                        setTimeout(() => hideNotification(id), 3000);
+                                    }
+                                }
+                            } else if (type === "part") {
+                                console.log("percentage", percentage, file.name);
+                                const now = (percentage * 100).toFixed(2);
+                                updateNotification({
+                                    id,
+                                    header: `Adding ${file.name}`,
+                                    body: (
+                                        <span>
+                                            {`Processing (${file.name}): `}
+                                            <ProgressBar
+                                                striped
+                                                variant="info"
+                                                now={now}
+                                                label={`${now}%`}
+                                            />
+                                        </span>
+                                    )
+                                });
+                            }
+                        },
+                        assetsBatch
+                    ),
                     file
                 });
             } catch (e) {
@@ -549,26 +596,9 @@ class AdGallery extends Component {
         }
     }
 
-    // componentDidMount() {
-    //     const { addNotification, updateNotification } = this.props;
-    //
-    //     addNotification({
-    //         id: "test",
-    //         header: "hello world",
-    //         body: "this is just a test"
-    //     });
-    //     addNotification({
-    //         id: "test 2",
-    //         header: "hello world 2",
-    //         body: "this is just another test"
-    //     });
-    //     setTimeout(() => {
-    //         updateNotification({
-    //             id: "test 2",
-    //             body: "this is an updated notification"
-    //         });
-    //     }, 3000);
-    // }
+    onSetGalleryState(state) {
+        this.setState({ ...state });
+    }
 
     render() {
         const {
@@ -583,7 +613,8 @@ class AdGallery extends Component {
             loadingGallery,
             showCrop,
             featuredImage,
-            croppedImage
+            croppedImage,
+            tagType
         } = this.state;
         return (
             <div style={{ height: "100%" }}>
@@ -714,295 +745,17 @@ class AdGallery extends Component {
                     className="gallery preview-gallery text-left"
                     sortable
                     useDragHandle
+                    editable
+                    onSetGalleryState={this.onSetGalleryState}
+                    onReleaseDateChange={this.onReleaseDateChange}
+                    tagInput={tagInput}
+                    tagType={tagType}
                     loading={loadingGallery}
-                    galleryName={
-                        <InlineInputGroup
-                            textId="gallery-name-text"
-                            inputId="gallery-name-input"
-                            text={
-                                <h4 id="gallery-name-text" className="mb-0">
-                                    {galleryName || "Click to add a Gallery Title"}
-                                </h4>
-                            }
-                            input={({ onConfirm }) => (
-                                <InputGroup>
-                                    <FormControl
-                                        placeholder="Title"
-                                        aria-label="Title"
-                                        aria-describedby="basic-addon1"
-                                        required
-                                        value={galleryName}
-                                        onChange={e => {
-                                            this.setState({
-                                                galleryName: e.target.value
-                                            });
-                                        }}
-                                        id="gallery-name-input"
-                                        onKeyDown={e =>
-                                            this.getOnKeyDownConfirm(e, onConfirm)
-                                        }
-                                        onBlur={onConfirm}
-                                    />
-                                    <InputGroup.Append>
-                                        <Button variant="success">
-                                            <FontAwesomeIcon
-                                                icon={faCheckCircle}
-                                                onClick={onConfirm}
-                                            />
-                                        </Button>
-                                    </InputGroup.Append>
-                                    <FormControl.Feedback type="invalid">
-                                        Please choose a gallery name.
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                            )}
-                        />
-                    }
-                    galleryDescription={
-                        <InlineInputGroup
-                            textId="gallery-description-text"
-                            inputId="gallery-description-input"
-                            text={
-                                <span id="gallery-description-text">
-                                    {galleryDescription || "Click to add a description."}
-                                </span>
-                            }
-                            input={({ onConfirm }) => (
-                                <InputGroup>
-                                    <FormControl
-                                        placeholder="Description"
-                                        aria-label="Description"
-                                        aria-describedby="basic-addon1.1"
-                                        required
-                                        value={galleryDescription}
-                                        onChange={e => {
-                                            this.setState({
-                                                galleryDescription: e.target.value
-                                            });
-                                        }}
-                                        id="gallery-description-input"
-                                        onKeyDown={e =>
-                                            this.getOnKeyDownConfirm(e, onConfirm)
-                                        }
-                                        onBlur={onConfirm}
-                                    />
-                                    <InputGroup.Append>
-                                        <Button variant="success">
-                                            <FontAwesomeIcon
-                                                icon={faCheckCircle}
-                                                onClick={onConfirm}
-                                            />
-                                        </Button>
-                                    </InputGroup.Append>
-                                    <FormControl.Feedback type="invalid">
-                                        Please choose a gallery description.
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                            )}
-                        />
-                    }
-                    releaseDate={
-                        <InlineInputGroup
-                            tooltipPlacement="right"
-                            textId="gallery-release-date-text"
-                            inputId="gallery-release-date-input"
-                            text={
-                                <span id="gallery-release-date-text">
-                                    {releaseDate instanceof Date ? (
-                                        <h4 className="mb-0">
-                                            <FontAwesomeIcon icon={faCalendar} />{" "}
-                                            {releaseDate.toLocaleDateString("en-US")}
-                                        </h4>
-                                    ) : null}
-                                </span>
-                            }
-                            input={({ onConfirm }) => (
-                                <InputGroup>
-                                    <FormControl
-                                        as={DatePicker}
-                                        selected={releaseDate}
-                                        onChange={this.onReleaseDateChange}
-                                        onSelect={onConfirm}
-                                        withPortal
-                                        timeFormat="HH:mm"
-                                        timeIntervals={15}
-                                        timeCaption="time"
-                                        dateFormat="MMMM d, yyyy h:mm aa"
-                                        fixedHeight
-                                        className="form-control bs-date-picker"
-                                        aria-describedby="basic-addon2"
-                                        required
-                                        isValid={releaseDate instanceof Date}
-                                        id="gallery-release-date-input"
-                                    />
-                                    <FormControl.Feedback type="invalid">
-                                        Please choose a gallery release date &amp; time.
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                            )}
-                        />
-                    }
-                    tags={
-                        <InlineInputGroup
-                            tooltipPlacement="left"
-                            textId="gallery-tags-text"
-                            inputId="gallery-tags-input"
-                            text={
-                                <div
-                                    id="gallery-tags-text"
-                                    className="badges-cloud text-right"
-                                >
-                                    <span>
-                                        <FontAwesomeIcon icon={faTags} size="sm" />{" "}
-                                        <TagCloud tags={tags} />
-                                    </span>
-                                </div>
-                            }
-                            input={({ onConfirm }) => (
-                                <InputGroup>
-                                    <FormControl
-                                        placeholder="Add tag"
-                                        aria-label="Add tag"
-                                        aria-describedby="basic-addon3"
-                                        value={tagInput}
-                                        onChange={e => {
-                                            this.setState({
-                                                tagInput: e.target.value
-                                            });
-                                        }}
-                                        onKeyUp={e => {
-                                            switch (true) {
-                                                case e.key === "Control": {
-                                                    this.setState({
-                                                        tagType: "default"
-                                                    });
-                                                    break;
-                                                }
-                                                default: {
-                                                    //
-                                                }
-                                            }
-                                        }}
-                                        onKeyDown={e => {
-                                            switch (true) {
-                                                case e.key === "Control": {
-                                                    this.setState({
-                                                        tagType: "model"
-                                                    });
-                                                    break;
-                                                }
-                                                case e.key === "Tab":
-                                                case e.key === "Enter":
-                                                case e.key === ",": {
-                                                    e.preventDefault();
-                                                    if (tagInput.length === 0) {
-                                                        onConfirm();
-                                                        return;
-                                                    }
-                                                    if (tagInput.length < 3) {
-                                                        return;
-                                                    }
-                                                    const { tagType } = this.state;
-                                                    this.setState({
-                                                        tagInput: "",
-                                                        tags: [
-                                                            ...tags.filter(
-                                                                ({ tag }) =>
-                                                                    tag !== tagInput
-                                                            ),
-                                                            {
-                                                                tag: tagInput,
-                                                                type: tagType
-                                                            }
-                                                        ]
-                                                    });
-                                                    break;
-                                                }
-                                                default: {
-                                                    //
-                                                }
-                                            }
-                                        }}
-                                        isValid={tags.length > 0}
-                                        isInvalid={tags.length < this.minTags}
-                                        id="gallery-tags-input"
-                                    />
-                                    <InputGroup.Append>
-                                        <InputGroup.Text>
-                                            <Form.Check
-                                                type="checkbox"
-                                                id="check-api-checkbox"
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center"
-                                                }}
-                                            >
-                                                <OverlayTrigger
-                                                    placement="top"
-                                                    overlay={
-                                                        <Tooltip>
-                                                            Use &quot;Ctrl&quot; for
-                                                            interim toggle.
-                                                        </Tooltip>
-                                                    }
-                                                >
-                                                    <Form.Check.Input
-                                                        type="checkbox"
-                                                        onChange={e => {
-                                                            this.setState({
-                                                                tagType:
-                                                                    e.target.checked ===
-                                                                    true
-                                                                        ? "model"
-                                                                        : "default"
-                                                            });
-                                                        }}
-                                                        checked={
-                                                            this.state.tagType === "model"
-                                                                ? true
-                                                                : false
-                                                        }
-                                                    />
-                                                </OverlayTrigger>
-                                                <Form.Check.Label>Model</Form.Check.Label>
-                                            </Form.Check>
-                                        </InputGroup.Text>
-                                    </InputGroup.Append>
-                                    <InputGroup.Append>
-                                        <Button variant="success">
-                                            <FontAwesomeIcon
-                                                icon={faCheckCircle}
-                                                onClick={onConfirm}
-                                            />
-                                        </Button>
-                                    </InputGroup.Append>
-                                    <FormControl.Feedback type="invalid">
-                                        {`Please add ${
-                                            this.minTags - tags.length
-                                        } more gallery tag ${
-                                            this.minTags - tags.length === 1 ? "" : "s"
-                                        } .`}
-                                    </FormControl.Feedback>
-                                    <FormControl.Feedback type="valid">
-                                        <div className="align-left badges-cloud">
-                                            <TagCloud
-                                                tags={tags}
-                                                removeable
-                                                handleRemove={tag => {
-                                                    this.setState({
-                                                        tags: tags.filter(
-                                                            ({ tag: storedTag }) =>
-                                                                storedTag !== tag
-                                                        )
-                                                    });
-                                                }}
-                                            />
-                                        </div>
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                            )}
-                        />
-                    }
+                    galleryName={galleryName}
+                    galleryDescription={galleryDescription}
+                    releaseDate={releaseDate}
+                    tags={tags}
+                    minTags={this.minTags}
                     photos={photos}
                     video={video}
                     onRemoveImage={this.onRemoveImage}

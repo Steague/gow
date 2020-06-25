@@ -4,7 +4,6 @@ export const addNotification = notification => ({
 });
 
 export const hideNotification = id => {
-    console.log("got to the action?", id);
     return {
         type: "HIDE_NOTIFICATION",
         payload: id

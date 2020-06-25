@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import Gallery from "react-photo-gallery";
 import { SortableContainer } from "react-sortable-hoc";
 import SortablePhoto from "../SortablePhoto";
 
-class SortableGallery extends Component {
+class SortableGallery extends PureComponent {
     render() {
+        console.log("render");
         const {
             photos,
             onOpenCarousel,

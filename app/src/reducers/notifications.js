@@ -17,9 +17,7 @@ export default (
         }
         case "HIDE_NOTIFICATION": {
             const newState = [...state];
-            console.log("newState", newState);
             newState.forEach(({ id }, i) => {
-                console.log("this the right one?", id, action.payload);
                 if (id === action.payload) {
                     newState[i].show = false;
                 }
