@@ -110,14 +110,16 @@ router.route("/auth/google").post(
     sendToken
 );
 
-router
-    .route("/upload")
-    // .post(verifyToken, (req, res, next) => {
-    //     if (!req.user || !config.development.admins.find(admin => req.user === admin)) {
-    //         return res.status(401).send('User Not Authenticated');
-    //     }
-    //     next();
-    .post(upload.any(), async (req, res, next) => {
+router.route("/upload").post(
+    verifyToken,
+    (req, res, next) => {
+        if (!req.user || !config.development.admins.find(admin => req.user === admin)) {
+            return res.status(401).send("User Not Authenticated");
+        }
+        next();
+    },
+    upload.any(),
+    async (req, res, next) => {
         try {
             const {
                 galleryName,
@@ -180,7 +182,8 @@ router
             debug(err);
             res.status(400).send({ message: "Bad Request" });
         }
-    });
+    }
+);
 
 router.route("/galleries/all").get(async (req, res, next) => {
     const galleries = await GalleryController.findAll();
