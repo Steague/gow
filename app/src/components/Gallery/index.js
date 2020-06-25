@@ -130,21 +130,15 @@ class GowGallery extends PureComponent {
         } = this.props;
         const { tab } = this.state;
         if (photos.length > 0 && tab === "photos") {
-            const SV = props => (
-                <ScrollableViewport
-                    className="gallery-images"
-                    style={{
-                        width: "calc(100% + 2.5rem)",
-                        height: "calc(100% + 1.25rem)"
-                    }}
-                    {...props}
-                >
-                    {props.children}
-                </ScrollableViewport>
-            );
             if (sortable) {
                 return (
-                    <SV>
+                    <ScrollableViewport
+                        className="gallery-images"
+                        style={{
+                            width: "calc(100% + 2.5rem)",
+                            height: "calc(100% + 1.25rem)"
+                        }}
+                    >
                         <SortableGallery
                             photos={photos}
                             useDragHandle={useDragHandle}
@@ -155,12 +149,18 @@ class GowGallery extends PureComponent {
                             axis={axis}
                             targetRowHeight={containerWidth => containerWidth / 2}
                         />
-                    </SV>
+                    </ScrollableViewport>
                 );
             }
 
             return (
-                <SV>
+                <ScrollableViewport
+                    className="gallery-images"
+                    style={{
+                        width: "calc(100% + 2.5rem)",
+                        height: "calc(100% + 1.25rem)"
+                    }}
+                >
                     <Gallery
                         photos={photos}
                         renderImage={props => (
@@ -175,7 +175,7 @@ class GowGallery extends PureComponent {
                         axis={axis}
                         targetRowHeight={containerWidth => containerWidth / 2}
                     />
-                </SV>
+                </ScrollableViewport>
             );
         }
 
@@ -366,11 +366,6 @@ class GowGallery extends PureComponent {
                                 />
                             )}
                         </Card.Text>
-                        {/*<TypeTabs
-                            loading={loading}
-                            videoTab={videoTab}
-                            photosTab={photosTab}
-                        />*/}
                         {loading === true && <Loading />}
                         {loading !== true && this.getGalleryComponents()}
                     </Card.Body>

@@ -44,7 +44,6 @@ class TypeTabs extends Component {
     render() {
         const { tab, onSetTab = () => {} } = this.props;
         const availableTabs = this.getAvailableTabs();
-        console.log({ availableTabs, tab });
         return (
             <React.Fragment>
                 {availableTabs["video"] && availableTabs["photos"] && (
