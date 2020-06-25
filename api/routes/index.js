@@ -176,7 +176,6 @@ router
                 debug(newGallery);
                 res.status(400).send({ message: "Unabble to create gallery" });
             }
-            // res.send({message: "OK"});
         } catch (err) {
             debug(err);
             res.status(400).send({ message: "Bad Request" });
@@ -190,6 +189,18 @@ router.route("/galleries/all").get(async (req, res, next) => {
             err: "no galleries exist"
         });
     }
+    res.send(galleries);
+});
+
+router.route("/galleries/tag/:tag").get(async (req, res, next) => {
+    const { tag } = req.params;
+    const galleries = await TagController.findByTag(tag);
+    if (!galleries) {
+        return res.status(404).json({
+            err: "no galleries exist"
+        });
+    }
+
     res.send(galleries);
 });
 

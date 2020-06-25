@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { Badge, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import _ from "lodash";
-
 import { faTimesCircle } from "@fortawesome/pro-solid-svg-icons";
+
+import "./TagCloud.scss";
 
 class TagCloud extends Component {
     render() {
@@ -42,7 +44,12 @@ class TagCloud extends Component {
                                     </OverlayTrigger>
                                 </span>
                             ) : (
-                                tag
+                                <NavLink
+                                    className="tag-nav-link text-body"
+                                    to={`/galleries/tag/${tag}`}
+                                >
+                                    {tag}
+                                </NavLink>
                             )}
                         </span>
                     </Badge>

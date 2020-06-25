@@ -131,6 +131,10 @@ class App extends Component {
                                 <Admin token={token} />
                             </PrivateRoute>
                             <Route
+                                path="/galleries/tag/:tag"
+                                render={props => <Galleries />}
+                            />
+                            <Route
                                 path="/gallery/:id/:tab"
                                 render={props => <Gallery />}
                             />

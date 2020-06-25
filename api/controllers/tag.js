@@ -2,6 +2,7 @@ const debug = require("debug")("api:tag_cont");
 const db = require("../models");
 const Gallery = db.Gallery;
 const Tag = db.Tag;
+const Asset = db.Asset;
 
 exports.create = ({ tag, type }) =>
     Tag.findOne({
@@ -37,7 +38,14 @@ exports.findAll = () =>
             {
                 model: Gallery,
                 as: "galleries",
-                attributes: ["id", "galleryName", "galleryDescription"],
+                attributes: [
+                    "uuid",
+                    "galleryName",
+                    "galleryDescription",
+                    "releaseDate",
+                    "assetOrder",
+                    "featuredImage"
+                ],
                 through: {
                     attributes: []
                 }
@@ -49,13 +57,61 @@ exports.findAll = () =>
             debug(">> Error while retrieving Tags: ", err);
         });
 
+exports.findByTag = tag =>
+    Tag.findOne({
+        where: { tag },
+        order: [[Gallery, "releaseDate", "DESC"]],
+        include: [
+            {
+                model: Gallery,
+                as: "Galleries",
+                attributes: [
+                    "uuid",
+                    "galleryName",
+                    "galleryDescription",
+                    "releaseDate",
+                    "assetOrder",
+                    "featuredImage"
+                ],
+                through: {
+                    attributes: []
+                },
+                include: [
+                    {
+                        model: Tag,
+                        as: "Tags",
+                        attributes: ["tag", "type"],
+                        through: "GalleryTags"
+                    },
+                    {
+                        model: Asset,
+                        as: "Assets",
+                        attributes: ["gfsId", "filename", "width", "height"],
+                        through: "GalleryAssets"
+                    }
+                ]
+            }
+        ]
+    })
+        .then(tag => tag)
+        .catch(err => {
+            debug(">> Error while finding Tag: ", err);
+        });
+
 exports.findById = id =>
     Tag.findByPk(id, {
         include: [
             {
                 model: Gallery,
                 as: "Galleries",
-                attributes: ["id", "galleryName", "galleryDescription"],
+                attributes: [
+                    "uuid",
+                    "galleryName",
+                    "galleryDescription",
+                    "releaseDate",
+                    "assetOrder",
+                    "featuredImage"
+                ],
                 through: {
                     attributes: []
                 }

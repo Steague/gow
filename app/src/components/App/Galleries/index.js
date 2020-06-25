@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import TagCloud from "../../TagCloud";
@@ -23,9 +24,18 @@ class Galleries extends Component {
     }
 
     getGalleries() {
-        fetch("/api/v1/galleries/all")
+        const { tag } = this.props.match.params;
+        let uri = `/api/v1/galleries/all`;
+        if (tag) {
+            uri = `/api/v1/galleries/tag/${tag}`;
+        }
+        fetch(uri)
             .then(response => response.json())
-            .then((galleries = []) => {
+            .then(galleries => {
+                if (tag) {
+                    this.setState({ galleries: galleries.Galleries });
+                    return;
+                }
                 this.setState({ galleries });
             })
             .catch(console.error);
@@ -67,7 +77,14 @@ class Galleries extends Component {
             });
 
             const execCore = () => {
-                while (overflowing() < stagger * 1.5 && overflowing() !== 0)
+                let tries = 1;
+                while (
+                    overflowing() < stagger * 1.5 &&
+                    overflowing() !== 0 &&
+                    tries <= 30
+                ) {
+                    tries++;
+                    console.log(overflowing(), stagger);
                     CHILDREN.forEach(child => {
                         if (
                             wideable ||
@@ -79,9 +96,13 @@ class Galleries extends Component {
                             child.style.removeProperty("font-size");
                         }
                     });
+                }
 
-                while (overflowing() > stagger * 1.5)
+                tries = 1;
+                while (overflowing() > stagger * 1.5 && tries <= 30) {
+                    tries++;
                     CHILDREN.forEach(child => update_font_size(child, true));
+                }
             };
 
             execCore();
@@ -120,12 +141,13 @@ class Galleries extends Component {
                                         lg={4}
                                         xl={3}
                                         key={`gallery-col-${i}`}
+                                        className="gallery-container"
                                     >
-                                        <NavLink
-                                            to={`/gallery/${uuid}`}
-                                            className="text-info"
-                                        >
-                                            <Card className="border border-light">
+                                        <Card className="border border-light gallery-card">
+                                            <NavLink
+                                                to={`/gallery/${uuid}`}
+                                                className="gallery-link text-body"
+                                            >
                                                 <div className="img-hover-zoom">
                                                     <Card.Img
                                                         variant="top"
@@ -143,11 +165,11 @@ class Galleries extends Component {
                                                         {galleryDescription}
                                                     </Card.Text>
                                                 </Card.Body>
-                                                <Card.Footer className="badges-cloud align-item-start justify-content-center">
-                                                    <TagCloud tags={tags} />
-                                                </Card.Footer>
-                                            </Card>
-                                        </NavLink>
+                                            </NavLink>
+                                            <Card.Footer className="badges-cloud align-item-start justify-content-center">
+                                                <TagCloud tags={tags} />
+                                            </Card.Footer>
+                                        </Card>
                                     </Col>
                                 );
                             }
@@ -158,4 +180,4 @@ class Galleries extends Component {
     }
 }
 
-export default Galleries;
+export default withRouter(Galleries);

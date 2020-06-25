@@ -1,24 +1,36 @@
 .galleries {
     padding-top: 1.5rem;
-    > div > div {
+    .gallery-container {
         padding-bottom: 1.5rem;
-        > a.text-info {
-            color: inherit !important;
+        a.gallery-link {
             &:hover {
                 text-decoration: none;
-                color: inherit !important;
+            }
+        }
+    }
+    .card {
+        height: 100%;
+
+        .gallery-link {
+            .img-hover-zoom {
+                overflow: hidden;
+            }
+            .img-hover-zoom img {
+                transition: transform 0.5s ease;
             }
 
-            .card {
-                height: 100%;
-
-                .gallery-card-header {
-                    height: 4.2rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+            &:hover {
+                .img-hover-zoom img {
+                    transform: scale(1.05);
                 }
             }
+        }
+
+        .gallery-card-header {
+            height: 4.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     }
 }

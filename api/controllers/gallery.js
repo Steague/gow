@@ -85,6 +85,33 @@ exports.findById = id =>
             debug(">> Error while finding Gallery: ", err);
         });
 
+exports.findByTag = tag =>
+    Gallery.findAll({
+        order: [["releaseDate", "DESC"]],
+        include: [
+            {
+                model: Tag,
+                as: "Tags",
+                attributes: ["tag", "type"],
+                through: "GalleryTags",
+                where: { tag }
+            },
+            {
+                model: Asset,
+                as: "Assets",
+                attributes: ["gfsId", "filename", "width", "height"],
+                through: "GalleryAssets"
+            }
+        ]
+    })
+        .then(galleries => {
+            debug({ galleries });
+            return galleries;
+        })
+        .catch(err => {
+            debug(">> Error while finding Galleries: ", err);
+        });
+
 exports.findByUuid = id =>
     Gallery.findOne({
         where: {

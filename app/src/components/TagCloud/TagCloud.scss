@@ -1,0 +1,8 @@
+.tag-nav-link {
+    transition: filter 0.2s ease;
+
+    &:hover {
+        text-decoration: none;
+        filter: brightness(85%);
+    }
+}
