@@ -12,6 +12,7 @@
         height: 100%;
 
         .gallery-link {
+            flex-grow: 1;
             .img-hover-zoom {
                 overflow: hidden;
             }

@@ -17,6 +17,8 @@ class Galleries extends Component {
 
         this.getGalleries = this.getGalleries.bind(this);
         this.fittext = this.fitext.bind(this);
+
+        this.prevReleaseDate = null;
     }
 
     componentDidMount() {
@@ -129,47 +131,84 @@ class Galleries extends Component {
                                 },
                                 i
                             ) => {
+                                const releaseDate = new Date(
+                                    Date.parse(releaseDateString)
+                                ).toLocaleDateString("en-US", {
+                                    weekday: "long",
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric"
+                                });
+                                let newDate = false;
+                                if (releaseDate !== this.prevReleaseDate) {
+                                    this.prevReleaseDate = releaseDate;
+                                    newDate = true;
+                                }
                                 const galleryFirstAsset = _.find(
                                     assets,
                                     a => a.gfsId === featuredImage
                                 );
+                                // <Col xs={12} className="mb-4">
+                                //     <h5 className="bg-dark mb-0 p-1 text-secondary">
+                                //         {releaseDate}
+                                //     </h5>
+                                // </Col>
+                                // <Col
+                                //     xs={12}
+                                //     md={6}
+                                //     lg={4}
+                                //     xl={3}
+                                //     className="gallery-container"
+                                // >
+                                //     <Card className="border border-light gallery-card">
+                                //         {releaseDate}
+                                //     </Card>
+                                // </Col>
                                 return (
-                                    <Col
-                                        xs={12}
-                                        md={6}
-                                        lg={4}
-                                        xl={3}
-                                        key={`gallery-col-${i}`}
-                                        className="gallery-container"
-                                    >
-                                        <Card className="border border-light gallery-card">
-                                            <NavLink
-                                                to={`/gallery/${uuid}`}
-                                                className="gallery-link text-body"
-                                            >
-                                                <div className="img-hover-zoom">
-                                                    <Card.Img
-                                                        variant="top"
-                                                        src={`/api/v1/image/${galleryFirstAsset.filename}`}
-                                                    />
-                                                </div>
-                                                <Card.Header
-                                                    as="h4"
-                                                    className="gallery-card-header fit-this-text"
+                                    <React.Fragment key={`gallery-col-${i}`}>
+                                        {newDate && (
+                                            <Col xs={12} className="mb-4">
+                                                <h5 className="bg-dark mb-0 p-1 text-secondary">
+                                                    {releaseDate}
+                                                </h5>
+                                            </Col>
+                                        )}
+                                        <Col
+                                            xs={12}
+                                            md={6}
+                                            lg={4}
+                                            xl={3}
+                                            className="gallery-container"
+                                        >
+                                            <Card className="border border-light gallery-card">
+                                                <NavLink
+                                                    to={`/gallery/${uuid}`}
+                                                    className="gallery-link text-body"
                                                 >
-                                                    {galleryName}
-                                                </Card.Header>
-                                                <Card.Body>
-                                                    <Card.Text>
-                                                        {galleryDescription}
-                                                    </Card.Text>
-                                                </Card.Body>
-                                            </NavLink>
-                                            <Card.Footer className="badges-cloud align-item-start justify-content-center">
-                                                <TagCloud tags={tags} />
-                                            </Card.Footer>
-                                        </Card>
-                                    </Col>
+                                                    <div className="img-hover-zoom">
+                                                        <Card.Img
+                                                            variant="top"
+                                                            src={`/api/v1/image/${galleryFirstAsset.filename}`}
+                                                        />
+                                                    </div>
+                                                    <Card.Header
+                                                        as="h4"
+                                                        className="gallery-card-header fit-this-text"
+                                                    >
+                                                        {galleryName}
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Card.Text>
+                                                            {galleryDescription}
+                                                        </Card.Text>
+                                                    </Card.Body>
+                                                </NavLink>
+                                                <Card.Footer className="badges-cloud align-item-start justify-content-center">
+                                                    <TagCloud tags={tags} />
+                                                </Card.Footer>
+                                            </Card>
+                                        </Col>
+                                    </React.Fragment>
                                 );
                             }
                         )}

@@ -5,7 +5,6 @@ import SortablePhoto from "../SortablePhoto";
 
 class SortableGallery extends PureComponent {
     render() {
-        console.log("render");
         const {
             photos,
             onOpenCarousel,
