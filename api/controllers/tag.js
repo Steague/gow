@@ -3,17 +3,32 @@ const db = require("../models");
 const Gallery = db.Gallery;
 const Tag = db.Tag;
 
-exports.create = (tag, type) =>
-    Tag.create({
-        tag: tag.tag,
-        type: tag.type
+exports.create = ({ tag, type }) =>
+    Tag.findOne({
+        where: {
+            tag
+        }
     })
-        .then(tag => {
-            debug(">> Created Tag: " + JSON.stringify(tag, null, 2));
-            return tag;
+        .then(foundTag => {
+            if (!foundTag) {
+                debug("Tag not found!");
+                return Tag.create({
+                    tag,
+                    type
+                })
+                    .then(tag => {
+                        debug(">> Created Tag: " + JSON.stringify(tag, null, 2));
+                        return tag;
+                    })
+                    .catch(err => {
+                        debug(">> Error while creating Tag: ", err);
+                    });
+            }
+
+            return foundTag;
         })
         .catch(err => {
-            debug(">> Error while creating Tag: ", err);
+            debug(">> Error while retreiving Tag: ", err);
         });
 
 exports.findAll = () =>

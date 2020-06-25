@@ -3,20 +3,35 @@ const db = require("../models");
 const Gallery = db.Gallery;
 const Asset = db.Asset;
 
-exports.create = asset =>
-    Asset.create({
-        gfsId: asset.gfsId.toString(),
-        filename: asset.filename,
-        width: asset.width,
-        height: asset.height,
-        contentType: asset.contentType
+exports.create = ({ gfsId, filename, width, height, contentType }) =>
+    Asset.findOne({
+        where: {
+            gfsId: gfsId.toString()
+        }
     })
-        .then(asset => {
-            debug(">> Created Asset: " + JSON.stringify(asset, null, 2));
-            return asset;
+        .then(foundAsset => {
+            if (!foundAsset) {
+                debug("Asset not found!");
+                return Asset.create({
+                    gfsId: gfsId.toString(),
+                    filename,
+                    width,
+                    height,
+                    contentType
+                })
+                    .then(asset => {
+                        debug(">> Created Asset: " + JSON.stringify(asset, null, 2));
+                        return asset;
+                    })
+                    .catch(err => {
+                        debug(">> Error while creating Asset: ", err);
+                    });
+            }
+
+            return foundAsset;
         })
         .catch(err => {
-            debug(">> Error while creating Asset: ", err);
+            debug(">> Error while retreiving Asset: ", err);
         });
 
 exports.findAll = () =>

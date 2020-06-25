@@ -4,7 +4,9 @@ module.exports = (sequelize, DataTypes) => {
         "Asset",
         {
             gfsId: {
-                type: DataTypes.STRING(32)
+                allowNull: false,
+                type: DataTypes.STRING(32),
+                unique: true
             },
             filename: {
                 type: DataTypes.STRING

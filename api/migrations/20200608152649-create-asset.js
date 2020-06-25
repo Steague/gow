@@ -9,7 +9,9 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             gfsId: {
-                type: Sequelize.STRING(32)
+                allowNull: false,
+                type: Sequelize.STRING(32),
+                unique: true
             },
             filename: {
                 type: Sequelize.STRING
