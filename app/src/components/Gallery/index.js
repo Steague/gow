@@ -214,7 +214,7 @@ class GowGallery extends PureComponent {
 
         return (
             <Container className={className}>
-                <Card className="text-left border border-light">
+                <Card className="text-left border border-Primary">
                     <Card.Header>
                         <Row>
                             <Col xs={9}>

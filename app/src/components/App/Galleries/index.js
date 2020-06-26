@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Jumbotron } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import TagCloud from "../../TagCloud";
 import _ from "lodash";
@@ -16,9 +16,9 @@ class Galleries extends Component {
         };
 
         this.getGalleries = this.getGalleries.bind(this);
-        this.fittext = this.fitext.bind(this);
-
-        this.prevReleaseDate = null;
+        this.fitext = this.fitext.bind(this);
+        this.addBlankColumns = this.addBlankColumns.bind(this);
+        this.getReleaseDateHeader = this.getReleaseDateHeader.bind(this);
     }
 
     componentDidMount() {
@@ -26,6 +26,7 @@ class Galleries extends Component {
     }
 
     getGalleries() {
+        window.scroll({ top: 0, left: 0, behavior: "smooth" });
         const { tag } = this.props.match.params;
         let uri = `/api/v1/galleries/all`;
         if (tag) {
@@ -43,7 +44,10 @@ class Galleries extends Component {
             .catch(console.error);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
+        if (!_.isEqual(prevProps.match.params, this.props.match.params)) {
+            this.getGalleries();
+        }
         this.fitext();
     }
 
@@ -111,8 +115,125 @@ class Galleries extends Component {
         });
     }
 
+    componentWillUpdate() {
+        this.addedCols4 = 0;
+    }
+
+    getBlankCOlumnCOntent(type, width) {
+        return (
+            <Jumbotron className="h-100 border">
+                <h1>End of the line!</h1>
+                <h4>
+                    You have reached the end of the galleries. Soon, this area will be
+                    replaced with more fun content.
+                </h4>
+            </Jumbotron>
+        );
+    }
+
+    addBlankColumns(i, note = "date") {
+        if (i === 0 || note !== "last") return null;
+        let mod4 = i % 4;
+        let mod3 = i % 3;
+        let mod2 = i % 2;
+        console.log("fill in empty columns", note, {
+            i,
+            mod4,
+            mod3,
+            mod2
+        });
+
+        let turnOn = {
+            "d-md-block": true,
+            "d-lg-block": true,
+            "d-xl-block": true
+        };
+
+        // switch (true) {
+        //     case mod4 === 0 && mod2 === 0: {
+        //         turnOn = {
+        //             "d-md-none": true,
+        //             "d-lg-block": true,
+        //             "d-xl-none": true
+        //         };
+        //         break;
+        //     }
+        //     case mod4 === 0: {
+        //         turnOn = {
+        //             "d-md-block": true,
+        //             "d-lg-block": true,
+        //             "d-xl-none": true
+        //         };
+        //         break;
+        //     }
+        //     case mod3 === 0: {
+        //         turnOn = {
+        //             "d-md-block": true,
+        //             "d-lg-none": true,
+        //             "d-xl-block": true
+        //         };
+        //         break;
+        //     }
+        //     case mod2 === 0: {
+        //         turnOn = {
+        //             "d-md-none": true,
+        //             "d-lg-block": true,
+        //             "d-xl-block": true
+        //         };
+        //         break;
+        //     }
+        //     default: {
+        //         //
+        //     }
+        // }
+
+        return (
+            (note === "last" || null) && (
+                <Col
+                    md={(2 - mod2) * 6}
+                    lg={(3 - mod3) * 4}
+                    xl={(4 - mod4) * 3}
+                    className={`gallery-container d-xs-none d-sm-none ${_.keys(
+                        turnOn
+                    ).join(" ")}`}
+                >
+                    <Card className="border gallery-card bg-primary">
+                        <Col
+                            className={`mt-2 mb-2 pr-2 pl-2 d-xs-none d-sm-none d-md-none d-lg-none d-xl-block`}
+                        >
+                            {this.getBlankCOlumnCOntent("XL", 4 - mod4)}
+                        </Col>
+                        <Col
+                            className={`mt-2 mb-2 pr-2 pl-2 d-xs-none d-sm-none d-md-none d-lg-block d-xl-none`}
+                        >
+                            {this.getBlankCOlumnCOntent("LG", 3 - mod3)}
+                        </Col>
+                        <Col
+                            className={`mt-2 mb-2 pr-2 pl-2 d-xs-none d-sm-none d-md-block d-lg-none d-xl-none`}
+                        >
+                            {this.getBlankCOlumnCOntent("MD", 2 - mod2)}
+                        </Col>
+                    </Card>
+                </Col>
+            )
+        );
+    }
+
+    getReleaseDateHeader(releaseDate) {
+        return (
+            null && (
+                <Col xs={12} className="mb-4">
+                    <h5 className="border bg-primary mb-0 p-1 rounded text-body">
+                        {releaseDate}
+                    </h5>
+                </Col>
+            )
+        );
+    }
+
     render() {
-        const { galleries = [] } = this.state;
+        const { galleries } = this.state;
+        let prevReleaseDate = null;
         return (
             <Container className="galleries">
                 <Row>
@@ -140,38 +261,21 @@ class Galleries extends Component {
                                     day: "numeric"
                                 });
                                 let newDate = false;
-                                if (releaseDate !== this.prevReleaseDate) {
-                                    this.prevReleaseDate = releaseDate;
+                                if (releaseDate !== prevReleaseDate) {
+                                    prevReleaseDate = releaseDate;
                                     newDate = true;
                                 }
                                 const galleryFirstAsset = _.find(
                                     assets,
                                     a => a.gfsId === featuredImage
                                 );
-                                // <Col xs={12} className="mb-4">
-                                //     <h5 className="bg-dark mb-0 p-1 text-secondary">
-                                //         {releaseDate}
-                                //     </h5>
-                                // </Col>
-                                // <Col
-                                //     xs={12}
-                                //     md={6}
-                                //     lg={4}
-                                //     xl={3}
-                                //     className="gallery-container"
-                                // >
-                                //     <Card className="border border-light gallery-card">
-                                //         {releaseDate}
-                                //     </Card>
-                                // </Col>
                                 return (
                                     <React.Fragment key={`gallery-col-${i}`}>
                                         {newDate && (
-                                            <Col xs={12} className="mb-4">
-                                                <h5 className="bg-dark mb-0 p-1 text-secondary">
-                                                    {releaseDate}
-                                                </h5>
-                                            </Col>
+                                            <React.Fragment>
+                                                {this.addBlankColumns(i)}
+                                                {this.getReleaseDateHeader(releaseDate)}
+                                            </React.Fragment>
                                         )}
                                         <Col
                                             xs={12}
@@ -180,7 +284,7 @@ class Galleries extends Component {
                                             xl={3}
                                             className="gallery-container"
                                         >
-                                            <Card className="border border-light gallery-card">
+                                            <Card className="border gallery-card">
                                                 <NavLink
                                                     to={`/gallery/${uuid}`}
                                                     className="gallery-link text-body"
@@ -195,7 +299,12 @@ class Galleries extends Component {
                                                         as="h4"
                                                         className="gallery-card-header fit-this-text"
                                                     >
-                                                        {galleryName}
+                                                        <Card.Title>
+                                                            {galleryName}
+                                                        </Card.Title>
+                                                        <Card.Subtitle className="text-muted">
+                                                            {releaseDate}
+                                                        </Card.Subtitle>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Card.Text>
@@ -208,6 +317,8 @@ class Galleries extends Component {
                                                 </Card.Footer>
                                             </Card>
                                         </Col>
+                                        {!galleries[i + 1] &&
+                                            this.addBlankColumns(i + 1, "last")}
                                     </React.Fragment>
                                 );
                             }

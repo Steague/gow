@@ -20,7 +20,7 @@ class Notifications extends Component {
                         key={`toast=${i}`}
                         onClose={() => hideNotification(id)}
                         show={show}
-                        className="bg-dark border-light"
+                        className="bg-dark border-primary"
                     >
                         <Toast.Header className="bg-primary text-body text-capitalize">
                             <strong className="mr-auto">{header}</strong>
