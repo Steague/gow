@@ -6,6 +6,7 @@ import { setTheme } from "../../actions";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/pro-solid-svg-icons";
+import ReactLoading from "react-loading";
 
 import "./Navbar.scss";
 
@@ -55,11 +56,25 @@ class GowNavbar extends Component {
                                     <NavDropdown
                                         title="Admin"
                                         id="admin-actions-dropdown"
+                                        className="mb-0"
                                     >
                                         <div className="dropdown-item">
                                             <NavLink to="/admin/add">Add Gallery</NavLink>
                                         </div>
                                     </NavDropdown>
+                                )}
+                                {authPending && (
+                                    <div
+                                        className="p-2"
+                                        style={{ width: "38px", height: "38px" }}
+                                    >
+                                        <ReactLoading
+                                            type={"cylon"}
+                                            color={"#FFFFFF"}
+                                            height={"100%"}
+                                            width={"100%"}
+                                        />
+                                    </div>
                                 )}
                             </Nav>
                             {/*<Form inline>
@@ -67,8 +82,16 @@ class GowNavbar extends Component {
                                 <Button variant="outline-success">Search</Button>
                             </Form>*/}
                         </Col>
-                        <Col xs={1}>
-                            <Nav id="settings-actions-nav">
+                        <Col
+                            xs={1}
+                            style={{
+                                display: "flex",
+                                flexFirection: "row",
+                                alignItems: "center",
+                                justifyContent: "flex-end"
+                            }}
+                        >
+                            <Nav className="mr-2" id="settings-actions-nav">
                                 <NavDropdown
                                     title={
                                         <Button variant="outline-success">
