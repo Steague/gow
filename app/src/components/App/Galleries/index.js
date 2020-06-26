@@ -131,7 +131,7 @@ class Galleries extends Component {
         );
     }
 
-    addBlankColumns(i, note = "date") {
+    addBlankColumns(i, note = "date", forceEndCap = true) {
         if (i === 0 || note !== "last") return null;
         let mod4 = i % 4;
         let mod3 = i % 3;
@@ -149,43 +149,45 @@ class Galleries extends Component {
             "d-xl-block": true
         };
 
-        // switch (true) {
-        //     case mod4 === 0 && mod2 === 0: {
-        //         turnOn = {
-        //             "d-md-none": true,
-        //             "d-lg-block": true,
-        //             "d-xl-none": true
-        //         };
-        //         break;
-        //     }
-        //     case mod4 === 0: {
-        //         turnOn = {
-        //             "d-md-block": true,
-        //             "d-lg-block": true,
-        //             "d-xl-none": true
-        //         };
-        //         break;
-        //     }
-        //     case mod3 === 0: {
-        //         turnOn = {
-        //             "d-md-block": true,
-        //             "d-lg-none": true,
-        //             "d-xl-block": true
-        //         };
-        //         break;
-        //     }
-        //     case mod2 === 0: {
-        //         turnOn = {
-        //             "d-md-none": true,
-        //             "d-lg-block": true,
-        //             "d-xl-block": true
-        //         };
-        //         break;
-        //     }
-        //     default: {
-        //         //
-        //     }
-        // }
+        if (forceEndCap === false) {
+            switch (true) {
+                case mod4 === 0 && mod2 === 0: {
+                    turnOn = {
+                        "d-md-none": true,
+                        "d-lg-block": true,
+                        "d-xl-none": true
+                    };
+                    break;
+                }
+                case mod4 === 0: {
+                    turnOn = {
+                        "d-md-block": true,
+                        "d-lg-block": true,
+                        "d-xl-none": true
+                    };
+                    break;
+                }
+                case mod3 === 0: {
+                    turnOn = {
+                        "d-md-block": true,
+                        "d-lg-none": true,
+                        "d-xl-block": true
+                    };
+                    break;
+                }
+                case mod2 === 0: {
+                    turnOn = {
+                        "d-md-none": true,
+                        "d-lg-block": true,
+                        "d-xl-block": true
+                    };
+                    break;
+                }
+                default: {
+                    //
+                }
+            }
+        }
 
         return (
             (note === "last" || null) && (
