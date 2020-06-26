@@ -21,8 +21,8 @@ class TagCloud extends Component {
                         pill
                         key={`tag-${i}`}
                         index={i}
-                        variant={type === "model" ? "primary" : "secondary"}
-                        className="border border-light"
+                        variant={type === "model" ? "primary" : ""}
+                        className="border border-primary"
                     >
                         <span>
                             {removeable ? (

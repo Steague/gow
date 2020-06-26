@@ -1,8 +1,9 @@
 .tag-nav-link {
-    transition: filter 0.2s ease;
+    transition: opacity 0.2s ease;
+    opacity: 0.5;
 
     &:hover {
         text-decoration: none;
-        filter: brightness(85%);
+        opacity: 1;
     }
 }
