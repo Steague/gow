@@ -17,7 +17,7 @@
         "express": "~4.16.1",
         "fstream": "^1.0.12",
         "http-errors": "~1.6.3",
-        "jsonwebtoken": "^8.5.1",
+        "jsonwebtoken": "^9.0.0",
         "lodash": "^4.17.15",
         "md5-file": "^5.0.0",
         "mongoose": "^5.9.18",
